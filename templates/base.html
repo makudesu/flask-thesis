@@ -1,9 +1,12 @@
-<LINK REL="SHORTCUT ICON"
-       HREF="static/favicon.jpg">
-
 {% extends "bootstrap/base.html" %}
 
 {% block title %}BNHS{% endblock %}
+
+{% block head %} 
+    {{ super() }}
+        <link rel="shortcut icon" href="{{ url_for('static', filename = 'bnhs.jpg') }}" type="image/x-icon">
+        <link rel="icon" href="{{ url_for('static', filename = 'bnhs.jpg') }}" type="image/x-icon">
+{% endblock %}
 
 {% block navbar %}
 <div class="navbar navbar-inverse" role="navigation">
