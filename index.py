@@ -2,7 +2,7 @@ from flask import Flask, render_template
 from flask.ext.bootstrap import Bootstrap
 
 kevin = Flask(__name__)
-bootstrap = Bootstrap(kevin)
+Bootstrap(kevin)
 
 @kevin.route('/')
 def index():
@@ -26,7 +26,7 @@ def enroll():
 
 @kevin.route('/admin')
 def admin():
-    return render_template('index.html')
+    return render_template('admin.html')
 
 if __name__ == '__main__':
     kevin.run(debug=True)
