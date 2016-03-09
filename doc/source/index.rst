@@ -17,6 +17,8 @@ TABLE OF CONTENTS:
     Chapter IV
     Chapter V
 
+    Extra
+
 Indices and tables
 ==================
 
