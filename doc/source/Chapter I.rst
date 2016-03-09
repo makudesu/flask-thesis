@@ -41,6 +41,7 @@ Chapter I. THE PROBLEM AND ITS BACKGROUND
    
 
 *References*
+
 * http://www.sciencedirect.com/science/article/pii/S1877042811025419
 * https://en.wikipedia.org
 
