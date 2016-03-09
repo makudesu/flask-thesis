@@ -6,7 +6,20 @@
 Cloud-Based Enrollment System
 ======================================
 
+.. _TABC:
+
 TABLE OF CONTENTS:
+==================
+
+* :ref:`TIT`
+* :ref:`APP`
+* :ref:`DED`
+* :ref:`ACK`
+* :ref:`ABS`
+* :ref:`TABC`
+* :ref:`LISF`
+* :ref:`LIST`
+
 
 .. toctree::
     :maxdepth: 4
@@ -16,6 +29,10 @@ TABLE OF CONTENTS:
     Chapter III
     Chapter IV
     Chapter V
+
+.. toctree::
+    :maxdepth: 1
+    :hidden:
 
     Extra
 
