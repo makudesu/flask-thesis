@@ -1,7 +1,7 @@
 from flask import Flask, render_template, flash, request, url_for, redirect, session, Response
 from flask.ext.bootstrap import Bootstrap
 from flask.ext.wtf import Form
-from flask.ext.login import UserMixin, LoginManager, login_required, login_user
+from flask.ext.login import UserMixin, LoginManager, login_required, login_user, logout_user
 from wtforms import StringField, SubmitField, PasswordField, SelectField, BooleanField
 from wtforms.validators import Required, EqualTo
 
@@ -10,8 +10,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 
-from passlib.hash import sha256_crypt
-import gc
+from werkzeug.security import generate_password_hash, check_password_hash
 
 """config"""
 app = Flask(__name__)
@@ -26,7 +25,6 @@ db = SQLAlchemy(app)
 
 class RegisterForm(Form):
     username = StringField('username', validators=[Required()])
-
     password = PasswordField('Password', validators=[
         Required(),
         EqualTo('confirm', message='Passwords must match')
@@ -60,17 +58,20 @@ class User(UserMixin, db.Model):
     #]
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, index=True)
-    password = db.Column(db.String(64))
+    password_hash = db.Column(db.String(128))
     stud_id = db.Column(db.Integer, db.ForeignKey('student.stud_id'),nullable=True) 
     account_type = db.Column(db.String(64))
 
-    def __init(self, username, password):
-        self.username = username
-        self.password = password
-    
-    @classmethod
-    def get(cls,id):
-        return cls.User.get(int(user_id))
+    @property
+    def password(self):
+        raise AttributeError('password is not a readable attribute')
+
+    @password.setter
+    def password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def verify_password(self, password):
+        return check_password_hash(self.password_hash, password)
 
     def __repr__(self):
         return "User %s" % self.username
@@ -125,13 +126,19 @@ def load_user(user_id):
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data, password=form.password.data)
-        if user.count() !=1:
-            flash('Wrong Username and/or Password')
-            return render_template('signin.html', form=form)
-        login_user(user[0])
-        flash('Login Successful')
+        user = User.query.filter_by(username=form.username.data).first()
+        if user is not None and user.verify_password(form.password.data):
+            login_user(user, form.remember_me.data)
+            return redirect(request.args.get('next') or url_for('index'))
+        flash('Wrong Username and/or Password')
     return render_template('signin.html', form=form)
+
+@app.route('/logout/')
+@login_required
+def logout():
+    logout_user()
+    flash('You have been logged out.')
+    return redirect(url_for('index'))
 
 @app.route('/')
 def index():
@@ -153,29 +160,24 @@ def signup():
     other_details = form.other_details.data
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
-        if user == None:
-            student = Student(
-                        student_status = form.student_status.data,
-                        other_details =  form.other_details.data
-                        )
-            db.session.add(student)
-            db.session.commit()
-            # you get the error TypeError: coercing to Unicode: need string or buffer, long found because of None
-            #if mild:
-            #    flash('stud_id is true')
-            #user = User(
-            #            username = form.username.data,
-            #            password = sha256_crypt.encrypt((str(form.password.data))),
-            #            account_type = form.account_type.data,
+        if user is not None:
+            flash('Username is already taken.')
+            return render_template('signup.html', form=form, username=username, password=password, account_type=account_type, student_status=student_status, other_details=other_details)
+        student = Student(
+                    student_status = form.student_status.data,
+                    other_details =  form.other_details.data
+                    )
+        user = User(
+                    username = form.username.data,
+                    password = form.password.data,
+                    account_type = form.account_type.data,
             #            stud_id = mild
-            #            )
-            #db.session.add(user)
-            #db.session.commit()
-            flash('Registration Successful')
-            return redirect(url_for('index'))
-        else:
-            flash('The username is already taken')
-    return render_template('signup.html', form=form, username=username, password=password, account_type=account_type, student_status=student_status, other_details=other_details)
+                    )
+        db.session.add(student)
+        db.session.add(user)
+        db.session.commit()
+        flash('Registration Successful')
+        return redirect(url_for('index'))
 #
 
 
@@ -188,6 +190,7 @@ admin.add_view(StudentView(Registration, db.session))
 admin.add_view(StudentView(User, db.session))
 
 if __name__ == '__main__':
+    #db.drop_all()
     db.create_all()
     app.run(debug=True)
 
