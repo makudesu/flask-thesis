@@ -15,10 +15,9 @@
     {% block page_content %}
     <div class="page-header">
         <h1>Sign in</h1>
-        <p>{% if email %}Welcome {{ email }} {% else %} Please Log-in to Continue {% endif %} </p>
     </div>
+    {{ form.csrf_token }}
     {{ wtf.quick_form(form) }}
-
     {% endblock %}
 </div>
 {% endblock %}

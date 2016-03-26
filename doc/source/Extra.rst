@@ -54,3 +54,22 @@ LIST OF TABLES
 
     Title page
 
+.. _Resources:
+
+Resources
+=========
+
+.. _[1]:
+    
+[1]
+^^^
+
+    *[1]The internet is free, we only pay ISP companies to provide us Internet connection service. ISP companies provide the infrastructure needed to connect us to the backbone connections that link every single computer on the internet. A quick Google search will clarify this.*
+
+.. _[2]:
+
+[2]
+^^^
+
+    *[2]Laptops/Smart phones.*
+ 

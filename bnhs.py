@@ -1,7 +1,7 @@
 from flask import Flask, render_template, flash, request, url_for, redirect, session, Response
 from flask.ext.bootstrap import Bootstrap
 from flask.ext.wtf import Form
-from flask.ext.login import UserMixin, LoginManager, login_required, login_user, logout_user
+from flask.ext.login import UserMixin, LoginManager, login_required, login_user, logout_user, current_user
 from wtforms import StringField, SubmitField, PasswordField, SelectField, BooleanField
 from wtforms.validators import Required, EqualTo
 
@@ -11,6 +11,7 @@ from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 
 from werkzeug.security import generate_password_hash, check_password_hash
+from functools import wraps
 
 """config"""
 app = Flask(__name__)
@@ -19,9 +20,19 @@ app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:root@localhost/thesis"
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
 login_manager.init_app(app)
-#login_manager.login_view = 'users.login'
+login_manager.login_view = 'login'
 Bootstrap(app)
 db = SQLAlchemy(app)
+
+"""wrapper"""
+def logout_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if current_user.is_authenticated:
+            flash("You are already logged in. You can't login/register while logged in.")
+            return redirect(url_for('user'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 class RegisterForm(Form):
     username = StringField('username', validators=[Required()])
@@ -30,12 +41,6 @@ class RegisterForm(Form):
         EqualTo('confirm', message='Passwords must match')
         ])
     confirm = PasswordField('Confirm Password', validators=[Required()])
-
-    account_type = SelectField(u'Account Type', choices = [
-        ('Stud', 'Student'),
-        ('Admi', 'Admin')
-        ],
-        validators=[Required()])
     student_status = SelectField(u'Student Type', choices = [
         ('New', 'New Student'), 
         ('Trans', 'Transferee')
@@ -50,21 +55,39 @@ class LoginForm(Form):
     remember_me = BooleanField('Keep me logged in')
     submit = SubmitField('Log In')
 
+
+class EnrollForm(Form):
+    username = StringField('username', validators=[Required()])
+    password = PasswordField('Password', validators=[Required()])
+    password = PasswordField('Password', validators=[Required()])
+    other_details= StringField('Other Details', validators=[Required()])
+    submit = SubmitField('Save')
+
 """models"""
 class User(UserMixin, db.Model):
     #TYPES = [
     #    (u'admin', u'Admin'),
     #    (u'student', u'Student')
     #]
-    id = db.Column(db.Integer, primary_key=True)
+    stud_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, index=True)
     password_hash = db.Column(db.String(128))
-    stud_id = db.Column(db.Integer, db.ForeignKey('student.stud_id'),nullable=True) 
-    account_type = db.Column(db.String(64))
+    user = db.relationship('Registration', backref='registration')
+    student_status = db.Column(db.String(64))
+    other_details = db.Column(db.String(64))
+
+    authenticated = db.Column(db.Boolean, default=False)
+    role = db.Column(db.String(64), default='Student')
 
     @property
     def password(self):
         raise AttributeError('password is not a readable attribute')
+
+    def get_id(self):
+        return self.stud_id
+
+    def is_authenticated(self):
+        return self.authenticated
 
     @password.setter
     def password(self, password):
@@ -76,22 +99,12 @@ class User(UserMixin, db.Model):
     def __repr__(self):
         return "User %s" % self.username
 
-class Student(db.Model):
-    stud_id = db.Column(db.Integer, primary_key=True)
-    registrations = db.relationship('Registration', backref='student')
-    user = db.relationship('User', backref='student')
-    student_status = db.Column(db.String(64))
-    other_details = db.Column(db.String(64))
-
-    def __repr__(self):
-        return "Student %d" % self.stud_id
-
 class Registration(db.Model):
-    reg_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     school_year = db.Column(db.String(64))
     grade_level = db.Column(db.Integer, default='6')
     year_level_status = db.Column(db.String(10))
-    stud_id = db.Column(db.Integer, db.ForeignKey('student.stud_id'), nullable=True)
+    stud_id = db.Column(db.Integer, db.ForeignKey('user.stud_id'), nullable=True)
 #
     def __repr__(self):
         return "Registration %d" % self.reg_id
@@ -118,16 +131,20 @@ def unauthorized():
 
 @login_manager.user_loader
 def load_user(user_id):
-        return User.query.get(int(user_id))    
+        return User.query.get(user_id)    
 """forms"""
 
 """routes"""
 @app.route('/login/', methods=['GET', 'POST'])
+@logout_required
 def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is not None and user.verify_password(form.password.data):
+            user.authenticated = True
+            db.session.add(user)
+            db.session.commit()
             login_user(user, form.remember_me.data)
             return redirect(request.args.get('next') or url_for('index'))
         flash('Wrong Username and/or Password')
@@ -136,9 +153,26 @@ def login():
 @app.route('/logout/')
 @login_required
 def logout():
+    user = current_user
+    user.authenticated = False
+    db.session.add(user)
+    db.session.commit()
     logout_user()
     flash('You have been logged out.')
-    return redirect(url_for('index'))
+    return redirect(request.args.get('next') or url_for('index'))
+
+@app.route('/user/', methods=['GET', 'POST'])
+@login_required
+def user():
+    user = User.query.filter_by(username=current_user.username).first()
+    form = EnrollForm(obj=user)
+    if form.validate_on_submit():
+        form.populate_obj(user)
+        db.session.add(user)
+        db.session.commit()
+        return redirect(url_for('index'))
+    return render_template('user.html', user=user, form=form
+        )
 
 @app.route('/')
 def index():
@@ -151,46 +185,41 @@ def exclusive():
 
 
 @app.route('/signup/', methods=['GET', 'POST'])
+@logout_required
 def signup():
     form = RegisterForm(request.form)
     username = form.username.data
     password = form.password.data,
-    account_type = form.account_type.data
     student_status = form.student_status.data
     other_details = form.other_details.data
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is not None:
             flash('Username is already taken.')
-            return render_template('signup.html', form=form, username=username, password=password, account_type=account_type, student_status=student_status, other_details=other_details)
-        student = Student(
-                    student_status = form.student_status.data,
-                    other_details =  form.other_details.data
-                    )
+            return render_template('signup.html', form=form, username=username, password=password, student_status=student_status, other_details=other_details)
         user = User(
                     username = form.username.data,
                     password = form.password.data,
-                    account_type = form.account_type.data,
-            #            stud_id = mild
+                    student_status = form.student_status.data,
+                    other_details =  form.other_details.data
                     )
-        db.session.add(student)
         db.session.add(user)
         db.session.commit()
         flash('Registration Successful')
         return redirect(url_for('index'))
+    return render_template('signup.html', form=form, username=username, password=password, student_status=student_status, other_details=other_details)
 #
 
 
-class StudentView(ModelView):
+class TableView(ModelView):
     page_size = 10
 
 admin = Admin(app, name='Bnhs', template_mode='bootstrap3', index_view=None)
-admin.add_view(StudentView(Student, db.session))
-admin.add_view(StudentView(Registration, db.session))
-admin.add_view(StudentView(User, db.session))
+admin.add_view(TableView(User, db.session))
+admin.add_view(TableView(Registration, db.session))
 
 if __name__ == '__main__':
-    #db.drop_all()
+#    db.drop_all()
     db.create_all()
     app.run(debug=True)
 

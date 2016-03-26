@@ -1,28 +1,28 @@
 Chapter I. THE PROBLEM AND ITS BACKGROUND
 =========================================
 
-    Today, computers and the Internet, has become an important element in the life of people around the world. 
+    Today, computers and the Internet, has become an important element in the life of people around the world.
 
-    The young generation use those technological advances at incredibly faster and more successful rate than the previous generations. One of the main reasons, is that they where born in the present world where the world's most vast information library is available for free anywhere anytime. We call it the internet. The internet is not just the web. 
+    The young generation use those technological advances at incredibly faster and more successful rate than the previous generations. One of the main reasons, is that they were born in the present world where the world's most vast information library is available for free anywhere any time. We call it the internet. The internet is not just the web.
    
     According to Wikipedia:
 
-    *The Internet is the global system of interconnected mainframe, personal, and wireless computer networks that use the Internet protocol suite (TCP/IP) to link billions of devices worldwide. It is a network of networks that consists of millions of private, public, academic, business, and government networks of local to global scope, linked by a broad array of electronic, wireless, and optical networking technologies.*
+    *The Internet is the global system of interconnected mainframe, personal, and wireless computer networks that use the Internet protocol suite (TCP/IP) to link billions of devices worldwide. It is a network of computers that consist of millions of private, public, academic, business, and government networks of local to global scope, linked by a broad array of electronic, wireless, and optical networking technologies.*
 
 
     From Wikipedia:
 
-    *The Internet carries an extensive range of information resources and services, such as the inter-linked hypertext documents and applications of the World Wide Web (WWW), electronic mail, Usenet newsgroups, telephony, and peer-to-peer networks for file sharing.*
+    *The Internet carries an extensive range of information resources and services, such as the inter-linked hypertext documents and applications of the World Wide Web (WWW), electronic mail, Usenet newsgroups, telephony, and peer-to-peer networks for file-sharing.*
 
-    The web is just a part of the internet, email is just a part of the internet, p2p networks is just a part of the internet, cloud computing etc.
+    The web is just a part of the internet, email is just a part of the internet, p2p networks is just a part of the internet, cloud computing, etc.
 
-    Now let's talk about cloud computing.
+    Now let's discuss cloud computing.
 
     Another from Wikipedia:
 
-    *Cloud computing, also on-demand computing, is a kind of Internet-based computing that provides shared processing resources and data to computers and other devices on demand. It is a model for enabling ubiquitous, on-demand access to a shared pool of configurable computing resources*
+    *Cloud computing, also on-demand computing, is a kind of Internet-based computing that provides shared processing resources and data to computers and other devices on demand. It is a model for enabling ubiquitous, on-demand access to a shared pool of configurable computing resources.*
 
-    Basically it's a shared Infrastructure/Application/Platform slash resources.
+    Basically it’s a shared Infrastructure/Application/Platform slash resources.
 
     Another from Wikipedia:
 
@@ -30,15 +30,14 @@ Chapter I. THE PROBLEM AND ITS BACKGROUND
 
     And computers as we know is composed of millions if not billions of transistor. Which affects the performance and the price.
     
-    We now have free Internet (The internet is free, we only pay ISP companies to provide us Internet connection service. ISP companies provide the infrastructure needed to connect us to the backbone connections that connects every single computer on the internet. A quick Google search will clarify this) and Cheaper computers (Laptops/Smart phones).
+    We now have free Internet :ref:`[1]`, and computers get cheaper :ref:`[2]`. 
+
 
     The Internet in the Philippines has been undergoing development since it was first made available in 1994. As of September 30, 2011, more than 30,000,000 people used the internet in the country accounting for 33% of the total population.
 
-    The problem is, public schools are still using the old, manual way of enrollment, that takes days, weeks or even months to finish. With the help of free Internet and cheaper computers, we decided to develop a system that will aide the BNHS public school (our choice) to transition into a more advance computerized enrollment system hosted on cloud.
+    The problem is, public schools are still using the old, manual way of enrollment that takes days, weeks or even months to finish. With the help of free Internet and cheaper computers, we decided to develop a system that will aid the BNHS public school (our choice) to transition into a more advance computerized enrollment system hosted on cloud.
 
-
-
-   
+  
 
 *References*
 * http://www.sciencedirect.com/science/article/pii/S1877042811025419

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %} BNHS {% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+        <h1>Edit Your profile</h1>
+</div>
+    {{ form.csrf_token }}
+    {{ wtf.quick_form(form) }}
+{% endblock %}

@@ -22,9 +22,27 @@
     </div>
     <div class="navbar-collapse collapse">
 
+            {% if current_user.is_authenticated %}
+
             <ul class = "nav navbar-nav">
-            <li><a href = "{{ url_for('signup') }}">Signup</a></li>
+            <li><a href = "{{ url_for('logout') }}">Logout</a></li>
             </ul>
+
+            <ul class = "nav navbar-nav">
+            <li><a href = "{{ url_for('user') }}">User</a></li>
+            </ul>
+
+            {% else %}
+
+            <ul class = "nav navbar-nav">
+            <li><a href = "{{ url_for('login') }}">Login</a></li>
+            </ul>
+
+            <ul class = "nav navbar-nav">
+            <li><a href = "{{ url_for('signup') }}">Register</a></li>
+            </ul>
+
+            {% endif %}
 
         </div>
     </div>
