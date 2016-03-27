@@ -17,6 +17,7 @@ from functools import wraps
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '128JSD*idfedf8ued89f7JHEDFjtw1143589123849iU*(UDF*D*F()D*F)(D*fjsdjfkj238490sdjfkjJDJFi(*)(&^&^*%tYYGHGhjBBb*H*hffJghgdfhkjk3eio2u3oiuqwoieuoiqyopolavofuiekghogsjdb*&&&DFOD&*F*(D&F*(DIOFUIKFHJDJHCKJVHJKCVkchvuhyiudyf8s9df98789743124789238UIOuFKAHDFKJAHDKLASHjkdgasgdhhasdgkjashdU(*&(*&*(*^^ASd876a7s6d87&&$^%$^#<F2>3234$#@121432!$25434%79^)*X&D(97_(A*Sd09POJZXd'
 app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:root@localhost/thesis"
+#app.config['SQLALCHEMY_DATABASE_URI'] = "postgres://vwuktasevlatqt:c-gzQ-avJEw5mlufChylQ25OKy@ec2-54-204-30-115.compute-1.amazonaws.com:5432/d8gppbdark5i8f"
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
 login_manager.init_app(app)
@@ -58,10 +59,11 @@ class LoginForm(Form):
 
 class EnrollForm(Form):
     username = StringField('username', validators=[Required()])
-    password = PasswordField('Password', validators=[Required()])
-    password = PasswordField('Password', validators=[Required()])
     other_details= StringField('Other Details', validators=[Required()])
     submit = SubmitField('Save')
+
+class EnrollmentForm(Form):
+    submit = SubmitField('enroll')
 
 """models"""
 class User(UserMixin, db.Model):
@@ -75,7 +77,6 @@ class User(UserMixin, db.Model):
     user = db.relationship('Registration', backref='registration')
     student_status = db.Column(db.String(64))
     other_details = db.Column(db.String(64))
-
     authenticated = db.Column(db.Boolean, default=False)
     role = db.Column(db.String(64), default='Student')
 
@@ -97,7 +98,7 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
     def __repr__(self):
-        return "User %s" % self.username
+        return self.username
 
 class Registration(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -105,9 +106,10 @@ class Registration(db.Model):
     grade_level = db.Column(db.Integer, default='6')
     year_level_status = db.Column(db.String(10))
     stud_id = db.Column(db.Integer, db.ForeignKey('user.stud_id'), nullable=True)
+    current = db.Column(db.Boolean, default=True)
 #
     def __repr__(self):
-        return "Registration %d" % self.reg_id
+        return str(self.id)
 
 @login_manager.request_loader
 def load_user(request):
@@ -182,6 +184,45 @@ def index():
 @login_required
 def exclusive():
     return render_template('index.html')
+
+@app.route('/enroll/', methods=['GET', 'POST'])
+@login_required
+def enroll():
+    user = User.query.filter_by(username=current_user.username).first()
+    grade = user.student_status
+    grad_status = Registration.query.filter_by(stud_id = current_user.stud_id).filter_by(current = True).first()
+    print grad_status.year_level_status
+   # .year_level_status
+#    grade_stat = grader.query.filter_by(current = True).first()
+#    print grade_stat.year_level_status, grade_stat.registration, grade_stat.current
+#    print grader.registration, grader.current, grader.year_level_status
+
+#    grade_status = Registration.query.filter_by(stud_id=current_user.stud_id).first()
+#    print grade_status.year_level_status
+    if grade == "Trans":
+        flash("Pwede kang magenroll ng kahit aling grade")
+    elif grade == "Old":
+        flash("Pwede kang magenroll ng next grade kung pasado ka. Pero kung hindi, makiusap ka sa titser mo para ipasa ka.")
+        if grad_status.year_level_status == 'Enrolled':
+            flash('You are already enrolled')
+        if grad_status.year_level_status == 'Passed':
+            flash('Congratuletsion pasado ka.')
+        if grad_status.year_level_status == 'Failed':
+            flash('Unfortunately you failed.')
+
+    elif grade =='New':
+        flash('You are enrolled in Grade 7')
+        enrolle = Registration(
+                    stud_id = user.stud_id,
+                    grade_level = '7',
+                    year_level_status = 'Enrolled'
+                    )
+        current_user.student_status = 'Old'
+        db.session.add(user)
+        db.session.add(enrolle)
+        db.session.commit()
+    return render_template('index.html')
+#
 
 
 @app.route('/signup/', methods=['GET', 'POST'])
