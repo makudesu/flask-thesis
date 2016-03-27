@@ -17,6 +17,10 @@ from functools import wraps
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '128JSD*idfedf8ued89f7JHEDFjtw1143589123849iU*(UDF*D*F()D*F)(D*fjsdjfkj238490sdjfkjJDJFi(*)(&^&^*%tYYGHGhjBBb*H*hffJghgdfhkjk3eio2u3oiuqwoieuoiqyopolavofuiekghogsjdb*&&&DFOD&*F*(D&F*(DIOFUIKFHJDJHCKJVHJKCVkchvuhyiudyf8s9df98789743124789238UIOuFKAHDFKJAHDKLASHjkdgasgdhhasdgkjashdU(*&(*&*(*^^ASd876a7s6d87&&$^%$^#<F2>3234$#@121432!$25434%79^)*X&D(97_(A*Sd09POJZXd'
 app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:root@localhost/thesis"
+"""set the school year"""
+app.config['CSY'] = '2016-2017'
+"""set the enrollment"""
+app.config['Enrollment'] = True
 #app.config['SQLALCHEMY_DATABASE_URI'] = "postgres://vwuktasevlatqt:c-gzQ-avJEw5mlufChylQ25OKy@ec2-54-204-30-115.compute-1.amazonaws.com:5432/d8gppbdark5i8f"
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
@@ -143,6 +147,7 @@ def load_user(user_id):
 """routes"""
 @app.route('/')
 def index():
+    print app.config['CSY']
     return render_template('index.html')
 
 @app.route('/login/', methods=['GET', 'POST'])
@@ -187,33 +192,52 @@ def user():
 @app.route('/enroll/', methods=['GET', 'POST'])
 @login_required
 def enroll():
+    if not app.config['Enrollment']:
+        return render_template('enrollment_unavailable.html')
     form = EnrollmentForm()
     user = User.query.filter_by(username=current_user.username).first()
     grade = user.student_status
+    grad_status = Registration.query.filter_by(stud_id = current_user.stud_id).filter_by(current = True).first()
+    if grad_status is None:
+        if current_user.role == 'Admin':
+            flash('Your the admin WTF man!')
+            return render_template('enrollment_unavailable.html')
+        flash('you can now enroll.')
     if form.validate_on_submit():
-        if grade == "Trans":
-            flash("Pwede kang magenroll ng kahit aling grade")
-        elif grade == "Old":
-            grad_status = Registration.query.filter_by(stud_id = current_user.stud_id).filter_by(current = True).first()
-            if grad_status is not None:
-                if grad_status.year_level_status == 'Enrolled':
-                    flash('You are already enrolled')
-                if grad_status.year_level_status == 'Passed':
-                    flash('Congratuletsion pasado ka.')
-                    grad_status.current = False
+        if grade == "trans":
+            flash("pwede kang magenroll ng kahit aling grade")
+        elif grade == "old":
+            if grad_status is not none:
+                if grad_status.year_level_status == 'enrolled':
+                    flash('you are already enrolled')
+                elif grad_status.year_level_status == 'passed':
+                    flash('congratuletsion pasado ka.')
+                    grad_status.current = false
                     next_grade_level = grad_status.grade_level + int(1)
-                    enrolle = Registration(
+                    enrolle = registration(
+                                school_year = app.config['csy'],
                                 stud_id = user.stud_id,
                                 grade_level = next_grade_level,
+                                year_level_status = 'enrolled'
+                                )
+                    db.session.add(enrolle)
+                    db.session.commit()
+                elif grad_status.year_level_status == 'failed':
+                    flash('unfortunately you failed.')
+                    same_grade_level = grad_status.grade_level
+                    grad_status.current = false
+                    enrolle = registration(
+                                school_year = app.config['CSY'],
+                                stud_id = user.stud_id,
+                                grade_level = same_grade_level,
                                 year_level_status = 'Enrolled'
                                 )
                     db.session.add(enrolle)
                     db.session.commit()
-                if grad_status.year_level_status == 'Failed':
-                    flash('Unfortunately you failed.')
         elif grade =='New':
             flash('You are enrolled in Grade 7')
             enrolle = Registration(
+                        school_year = app.config['CSY'],
                         stud_id = user.stud_id,
                         grade_level = '7',
                         year_level_status = 'Enrolled'
