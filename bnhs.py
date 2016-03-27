@@ -1,13 +1,13 @@
 from flask import Flask, render_template, flash, request, url_for, redirect, session, Response
 from flask.ext.bootstrap import Bootstrap
 from flask.ext.wtf import Form
-from flask.ext.login import UserMixin, LoginManager, login_required, login_user, logout_user, current_user
+from flask.ext.login import UserMixin, LoginManager, login_required, login_user, logout_user, current_user, AnonymousUserMixin
 from wtforms import StringField, SubmitField, PasswordField, SelectField, BooleanField
 from wtforms.validators import Required, EqualTo
 
 from flask.ext.sqlalchemy import SQLAlchemy
 
-from flask_admin import Admin
+from flask_admin import Admin, BaseView
 from flask_admin.contrib.sqla import ModelView
 
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -24,6 +24,11 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 Bootstrap(app)
 db = SQLAlchemy(app)
+class Anonymous(AnonymousUserMixin):
+    def __init__(self):
+        self.username = 'Idiot'
+        self.role = 'idiot'
+login_manager.anonymous_user = Anonymous
 
 """wrapper"""
 def logout_required(f):
@@ -35,6 +40,12 @@ def logout_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+@login_manager.unauthorized_handler
+def unauthorized():
+    flash('Unauthorized! Get out of here before I get mad, or you could just login/register.' )
+    return render_template('index.html')
+
+"""forms"""
 class RegisterForm(Form):
     username = StringField('username', validators=[Required()])
     password = PasswordField('Password', validators=[
@@ -63,8 +74,7 @@ class EnrollForm(Form):
     submit = SubmitField('Save')
 
 class EnrollmentForm(Form):
-    submit = SubmitField('enroll')
-
+    submit = SubmitField('Enroll')
 """models"""
 class User(UserMixin, db.Model):
     #TYPES = [
@@ -107,10 +117,10 @@ class Registration(db.Model):
     year_level_status = db.Column(db.String(10))
     stud_id = db.Column(db.Integer, db.ForeignKey('user.stud_id'), nullable=True)
     current = db.Column(db.Boolean, default=True)
-#
+    
     def __repr__(self):
         return str(self.id)
-
+"""flask-login"""
 @login_manager.request_loader
 def load_user(request):
     token = request.headers.get('Authorization')
@@ -126,17 +136,15 @@ def load_user(request):
                 return user
     return None
 
-@login_manager.unauthorized_handler
-def unauthorized():
-    flash('Unauthorized! Get out of here before I get mad, or you could just login/register.' )
-    return render_template('index.html')
-
 @login_manager.user_loader
 def load_user(user_id):
         return User.query.get(user_id)    
-"""forms"""
 
 """routes"""
+@app.route('/')
+def index():
+    return render_template('index.html')
+
 @app.route('/login/', methods=['GET', 'POST'])
 @logout_required
 def login():
@@ -176,54 +184,45 @@ def user():
     return render_template('user.html', user=user, form=form
         )
 
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-@app.route('/exclusive/')
-@login_required
-def exclusive():
-    return render_template('index.html')
-
 @app.route('/enroll/', methods=['GET', 'POST'])
 @login_required
 def enroll():
+    form = EnrollmentForm()
     user = User.query.filter_by(username=current_user.username).first()
     grade = user.student_status
-    grad_status = Registration.query.filter_by(stud_id = current_user.stud_id).filter_by(current = True).first()
-    print grad_status.year_level_status
-   # .year_level_status
-#    grade_stat = grader.query.filter_by(current = True).first()
-#    print grade_stat.year_level_status, grade_stat.registration, grade_stat.current
-#    print grader.registration, grader.current, grader.year_level_status
-
-#    grade_status = Registration.query.filter_by(stud_id=current_user.stud_id).first()
-#    print grade_status.year_level_status
-    if grade == "Trans":
-        flash("Pwede kang magenroll ng kahit aling grade")
-    elif grade == "Old":
-        flash("Pwede kang magenroll ng next grade kung pasado ka. Pero kung hindi, makiusap ka sa titser mo para ipasa ka.")
-        if grad_status.year_level_status == 'Enrolled':
-            flash('You are already enrolled')
-        if grad_status.year_level_status == 'Passed':
-            flash('Congratuletsion pasado ka.')
-        if grad_status.year_level_status == 'Failed':
-            flash('Unfortunately you failed.')
-
-    elif grade =='New':
-        flash('You are enrolled in Grade 7')
-        enrolle = Registration(
-                    stud_id = user.stud_id,
-                    grade_level = '7',
-                    year_level_status = 'Enrolled'
-                    )
-        current_user.student_status = 'Old'
-        db.session.add(user)
-        db.session.add(enrolle)
-        db.session.commit()
-    return render_template('index.html')
-#
-
+    if form.validate_on_submit():
+        if grade == "Trans":
+            flash("Pwede kang magenroll ng kahit aling grade")
+        elif grade == "Old":
+            grad_status = Registration.query.filter_by(stud_id = current_user.stud_id).filter_by(current = True).first()
+            if grad_status is not None:
+                if grad_status.year_level_status == 'Enrolled':
+                    flash('You are already enrolled')
+                if grad_status.year_level_status == 'Passed':
+                    flash('Congratuletsion pasado ka.')
+                    grad_status.current = False
+                    next_grade_level = grad_status.grade_level + int(1)
+                    enrolle = Registration(
+                                stud_id = user.stud_id,
+                                grade_level = next_grade_level,
+                                year_level_status = 'Enrolled'
+                                )
+                    db.session.add(enrolle)
+                    db.session.commit()
+                if grad_status.year_level_status == 'Failed':
+                    flash('Unfortunately you failed.')
+        elif grade =='New':
+            flash('You are enrolled in Grade 7')
+            enrolle = Registration(
+                        stud_id = user.stud_id,
+                        grade_level = '7',
+                        year_level_status = 'Enrolled'
+                        )
+            current_user.student_status = 'Old'
+            db.session.add(user)
+            db.session.add(enrolle)
+            db.session.commit()
+    return render_template('enroll.html', form=form)
 
 @app.route('/signup/', methods=['GET', 'POST'])
 @logout_required
@@ -249,16 +248,18 @@ def signup():
         flash('Registration Successful')
         return redirect(url_for('index'))
     return render_template('signup.html', form=form, username=username, password=password, student_status=student_status, other_details=other_details)
-#
-
-
-class TableView(ModelView):
+"""ModelView"""
+class TableView(ModelView, BaseView):
     page_size = 10
 
+    def is_accessible(self):
+        return current_user.role =='Admin'
+
+"""Flask-Admin"""
 admin = Admin(app, name='Bnhs', template_mode='bootstrap3', index_view=None)
 admin.add_view(TableView(User, db.session))
 admin.add_view(TableView(Registration, db.session))
-
+"""main program"""
 if __name__ == '__main__':
 #    db.drop_all()
     db.create_all()
