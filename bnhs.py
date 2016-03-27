@@ -200,7 +200,7 @@ def enroll():
     grad_status = Registration.query.filter_by(stud_id = current_user.stud_id).filter_by(current = True).first()
     if grad_status is None:
         if current_user.role == 'Admin':
-            flash('Your the admin WTF man!')
+            flash("You're the admin WTF man!")
             return render_template('enrollment_unavailable.html')
         flash('you can now enroll.')
     if form.validate_on_submit():
@@ -273,16 +273,29 @@ def signup():
         return redirect(url_for('index'))
     return render_template('signup.html', form=form, username=username, password=password, student_status=student_status, other_details=other_details)
 """ModelView"""
-class TableView(ModelView, BaseView):
+class UserView(ModelView, BaseView):
+    excluded_fields = ['password_hash', 'authenticated']
     page_size = 10
+    can_export = True
+    column_filters = ['username', 'role', 'student_status']
+    column_exclude_list = excluded_fields
+    column_export_exclude_list = excluded_fields
+
+    def is_accessible(self):
+        return current_user.role =='Admin'
+
+class RegistrationView(ModelView, BaseView):
+    page_size = 10
+    can_export = True
+    column_filters = ['school_year', 'grade_level', 'year_level_status']
 
     def is_accessible(self):
         return current_user.role =='Admin'
 
 """Flask-Admin"""
 admin = Admin(app, name='Bnhs', template_mode='bootstrap3', index_view=None)
-admin.add_view(TableView(User, db.session))
-admin.add_view(TableView(Registration, db.session))
+admin.add_view(UserView(User, db.session))
+admin.add_view(RegistrationView(Registration, db.session))
 """main program"""
 if __name__ == '__main__':
 #    db.drop_all()
