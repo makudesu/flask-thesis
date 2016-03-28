@@ -79,6 +79,7 @@ class EnrollForm(Form):
 
 class EnrollmentForm(Form):
     submit = SubmitField('Enroll')
+    grade7 = SubmitField('Grade 7')
 """models"""
 class User(UserMixin, db.Model):
     #TYPES = [
@@ -204,29 +205,35 @@ def enroll():
             return render_template('enrollment_unavailable.html')
         flash('you can now enroll.')
     if form.validate_on_submit():
-        if grade == "trans":
-            flash("pwede kang magenroll ng kahit aling grade")
-        elif grade == "old":
-            if grad_status is not none:
-                if grad_status.year_level_status == 'enrolled':
-                    flash('you are already enrolled')
-                elif grad_status.year_level_status == 'passed':
-                    flash('congratuletsion pasado ka.')
-                    grad_status.current = false
+        if grade == "Trans":
+            flash("Please choose your Grade.")
+        elif grade == "Old":
+#            if grad_status.grade_level == '12':
+#                return render_template('graduate.html')
+            grad_status = Registration.query.filter_by(stud_id = current_user.stud_id).filter_by(current = True).first()
+            print grad_status.grade_level
+            if grad_status is not None:
+                if grad_status.year_level_status == 'Enrolled':
+                    flash('You are already enrolled')
+                if grad_status.year_level_status == 'Passed':
+                    if grad_status.grade_level >= int(12):
+                        return render_template('graduate.html')
+                    flash('Congratuletsion pasado ka.')
+                    grad_status.current = False
                     next_grade_level = grad_status.grade_level + int(1)
-                    enrolle = registration(
-                                school_year = app.config['csy'],
+                    enrolle = Registration(
+                                school_year = app.config['CSY'],
                                 stud_id = user.stud_id,
                                 grade_level = next_grade_level,
-                                year_level_status = 'enrolled'
+                                year_level_status = 'Enrolled'
                                 )
                     db.session.add(enrolle)
                     db.session.commit()
-                elif grad_status.year_level_status == 'failed':
+                elif grad_status.year_level_status == 'Failed':
                     flash('unfortunately you failed.')
                     same_grade_level = grad_status.grade_level
-                    grad_status.current = false
-                    enrolle = registration(
+                    grad_status.current = False
+                    enrolle = Registration(
                                 school_year = app.config['CSY'],
                                 stud_id = user.stud_id,
                                 grade_level = same_grade_level,
@@ -300,5 +307,5 @@ admin.add_view(RegistrationView(Registration, db.session))
 if __name__ == '__main__':
 #    db.drop_all()
     db.create_all()
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0')
 
