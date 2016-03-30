@@ -2,7 +2,8 @@ from flask import Flask, render_template, flash, request, url_for, redirect, ses
 from flask.ext.bootstrap import Bootstrap
 from flask.ext.wtf import Form
 from flask.ext.login import UserMixin, LoginManager, login_required, login_user, logout_user, current_user, AnonymousUserMixin
-from wtforms import StringField, SubmitField, PasswordField, SelectField, BooleanField
+from flask.ext.admin.form.widgets import DatePickerWidget
+from wtforms import StringField, SubmitField, PasswordField, SelectField, BooleanField, IntegerField, DateField
 from wtforms.validators import Required, EqualTo
 
 from flask.ext.sqlalchemy import SQLAlchemy
@@ -62,7 +63,6 @@ class RegisterForm(Form):
         ('Trans', 'Transferee')
         ],
         validators=[Required()])
-    other_details = StringField('Other Registration details like age or something', validators=[Required()])
     submit = SubmitField('Submit')
 
 class LoginForm(Form):
@@ -73,13 +73,34 @@ class LoginForm(Form):
 
 
 class EnrollForm(Form):
-    username = StringField('username', validators=[Required()])
-    other_details= StringField('Other Details', validators=[Required()])
+    username = StringField('Username', validators=[Required()])
+
+    last_name = StringField('Last Name', validators=[Required()])
+    first_name = StringField('First Name', validators=[Required()])
+    middle_name = StringField('Middle Name', validators=[Required()])
+    gender = StringField('Gender', validators=[Required()])
+    birth_date = DateField('Birth Date', widget=DatePickerWidget(), validators=[Required()])
+    age = StringField('Age', validators=[Required()])
+    birth_place = StringField('Birth Place', validators=[Required()])
+    religion = StringField('Religion', validators=[Required()])
+    present_address = StringField('Present Address', validators=[Required()])
+    email = StringField('Email', validators=[Required()])
+    contact_number = IntegerField('Contact Number', validators=[Required()])
+
     submit = SubmitField('Save')
 
 class EnrollmentForm(Form):
+    grade_level = SelectField('Grade Level', choices = [
+        ('7', 'Grade 7'), 
+        ('8', 'Grade 8'), 
+        ('9', 'Grade 9'), 
+        ('10', 'Grade 10'), 
+        ('11', 'Grade 11'), 
+        ('12', 'Grade 12')
+        ],
+        validators=[Required()])
     submit = SubmitField('Enroll')
-    grade7 = SubmitField('Grade 7')
+
 """models"""
 class User(UserMixin, db.Model):
     #TYPES = [
@@ -91,7 +112,19 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     user = db.relationship('Registration', backref='registration')
     student_status = db.Column(db.String(64))
-    other_details = db.Column(db.String(64))
+
+    last_name = db.Column(db.String(64))
+    first_name = db.Column(db.String(64))
+    middle_name = db.Column(db.String(64))
+    gender = db.Column(db.String(64))
+    birth_date = db.Column(db.String(64))
+    age = db.Column(db.Integer)
+    birth_place = db.Column(db.String(64))
+    religion = db.Column(db.String(64))
+    present_address = db.Column(db.String(64))
+    email = db.Column(db.String(64))
+    contact_number = db.Column(db.Integer)
+
     authenticated = db.Column(db.Boolean, default=False)
     role = db.Column(db.String(64), default='Student')
 
@@ -204,21 +237,32 @@ def enroll():
             flash("You're the admin WTF man!")
             return render_template('enrollment_unavailable.html')
         flash('you can now enroll.')
+    if grade  == str('New'):
+        del form.grade_level
+    if grade  == str('Old'):
+        del form.grade_level
     if form.validate_on_submit():
         if grade == "Trans":
             flash("Please choose your Grade.")
+            enrolle = Registration(
+                        school_year = app.config['CSY'],
+                        stud_id = user.stud_id,
+                        grade_level = form.grade_level.data,
+                        year_level_status = 'Enrolled'
+                        )
+            current_user.student_status = 'Old'
+            db.session.add(enrolle)
+            db.session.commit()
+            return redirect(url_for('index'))
         elif grade == "Old":
-#            if grad_status.grade_level == '12':
-#                return render_template('graduate.html')
             grad_status = Registration.query.filter_by(stud_id = current_user.stud_id).filter_by(current = True).first()
-            print grad_status.grade_level
             if grad_status is not None:
                 if grad_status.year_level_status == 'Enrolled':
-                    flash('You are already enrolled')
+                    flash('You are already enrolled.')
                 if grad_status.year_level_status == 'Passed':
                     if grad_status.grade_level >= int(12):
                         return render_template('graduate.html')
-                    flash('Congratuletsion pasado ka.')
+                    flash('Congrats you passed your current grade.')
                     grad_status.current = False
                     next_grade_level = grad_status.grade_level + int(1)
                     enrolle = Registration(
@@ -230,7 +274,7 @@ def enroll():
                     db.session.add(enrolle)
                     db.session.commit()
                 elif grad_status.year_level_status == 'Failed':
-                    flash('unfortunately you failed.')
+                    flash('Unfortunately you failed.')
                     same_grade_level = grad_status.grade_level
                     grad_status.current = False
                     enrolle = Registration(
@@ -262,28 +306,27 @@ def signup():
     username = form.username.data
     password = form.password.data,
     student_status = form.student_status.data
-    other_details = form.other_details.data
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is not None:
             flash('Username is already taken.')
-            return render_template('signup.html', form=form, username=username, password=password, student_status=student_status, other_details=other_details)
+            return render_template('signup.html', form=form, username=username, password=password, student_status=student_status)
         user = User(
                     username = form.username.data,
                     password = form.password.data,
                     student_status = form.student_status.data,
-                    other_details =  form.other_details.data
                     )
         db.session.add(user)
         db.session.commit()
         flash('Registration Successful')
         return redirect(url_for('index'))
-    return render_template('signup.html', form=form, username=username, password=password, student_status=student_status, other_details=other_details)
+    return render_template('signup.html', form=form, username=username, password=password, student_status=student_status)
 """ModelView"""
 class UserView(ModelView, BaseView):
-    excluded_fields = ['password_hash', 'authenticated']
+    excluded_fields = ['password_hash', 'authenticated', 'gender', 'birth_date', 'age', 'birth_place', 'religion', 'present_address', 'email', 'contact_number', 'role']
     page_size = 10
     can_export = True
+    can_view_details = True
     column_filters = ['username', 'role', 'student_status']
     column_exclude_list = excluded_fields
     column_export_exclude_list = excluded_fields
