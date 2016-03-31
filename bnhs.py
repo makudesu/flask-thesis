@@ -234,9 +234,9 @@ def enroll():
     grad_status = Registration.query.filter_by(stud_id = current_user.stud_id).filter_by(current = True).first()
     if grad_status is None:
         if current_user.role == 'Admin':
-            flash("You're the admin WTF man!")
+            flash("You're the admin. The Registration page is intended for students only.")
             return render_template('enrollment_unavailable.html')
-        flash('you can now enroll.')
+        flash("Registration is on going. You can now enroll.")
     if grade  == str('New'):
         del form.grade_level
     if grade  == str('Old'):
@@ -262,9 +262,9 @@ def enroll():
                 if grad_status.year_level_status == 'Passed':
                     if grad_status.grade_level >= int(12):
                         return render_template('graduate.html')
-                    flash('Congrats you passed your current grade.')
-                    grad_status.current = False
                     next_grade_level = grad_status.grade_level + int(1)
+                    grad_status.current = False
+                    flash("Congratulations! You've passed your current grade. Your are now enrolled on Grade", next_grade_level)
                     enrolle = Registration(
                                 school_year = app.config['CSY'],
                                 stud_id = user.stud_id,
