@@ -1,1 +1,1 @@
-web: gunicorn app:bnhs
+web: gunicorn bnhs:app
