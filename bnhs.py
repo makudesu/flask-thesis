@@ -10,12 +10,14 @@ from flask.ext.sqlalchemy import SQLAlchemy
 
 from flask_admin import Admin, BaseView
 from flask_admin.contrib.sqla import ModelView
+from flask_mail import Mail, Message
 
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 
 """config"""
 app = Flask(__name__)
+#app.config.from_object(__name__)
 app.config['SECRET_KEY'] = '128JSD*idfedf8ued89f7JHEDFjtw1143589123849iU*(UDF*D*F()D*F)(D*fjsdjfkj238490sdjfkjJDJFi(*)(&^&^*%tYYGHGhjBBb*H*hffJghgdfhkjk3eio2u3oiuqwoieuoiqyopolavofuiekghogsjdb*&&&DFOD&*F*(D&F*(DIOFUIKFHJDJHCKJVHJKCVkchvuhyiudyf8s9df98789743124789238UIOuFKAHDFKJAHDKLASHjkdgasgdhhasdgkjashdU(*&(*&*(*^^ASd876a7s6d87&&$^%$^#<F2>3234$#@121432!$25434%79^)*X&D(97_(A*Sd09POJZXd'
 app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:root@localhost/thesis"
 """set the school year"""
@@ -34,6 +36,16 @@ class Anonymous(AnonymousUserMixin):
         self.username = 'Idiot'
         self.role = 'idiot'
 login_manager.anonymous_user = Anonymous
+
+"""mail config"""
+MAIL_DEBUG = True
+MAIL_SERVER = 'smtp.gmail.com'
+MAIL_PORT = 465
+MAIL_USE_TLS= False
+MAIL_USE_SSL= True
+MAIL_USERNAME = 'flappybirdyiscool@gmail.com'
+MAIL_PASSWORD = '77jtR10D-3y5S6P'
+mail = Mail(app)
 
 """wrapper"""
 def logout_required(f):
@@ -179,10 +191,17 @@ def load_user(user_id):
         return User.query.get(user_id)    
 
 """routes"""
-@app.route('/')
+@app.route('/', methods=['POST', 'GET'])
 def index():
-    print app.config['CSY']
-    return render_template('index.html')
+    msg = Message(
+        'Hello',
+        sender='test@openmailbox.org',
+        recipients=
+        ['bnhs@openmailbox.org'])
+    msg.body = " This is the email body"
+    mail.send(msg)
+    return "hello"
+#    return render_template('index.html')
 
 @app.route('/login/', methods=['GET', 'POST'])
 @logout_required
@@ -215,11 +234,23 @@ def logout():
 def user():
     user = User.query.filter_by(username=current_user.username).first()
     form = EnrollForm(obj=user)
-    if form.validate_on_submit():
-        form.populate_obj(user)
-        db.session.add(user)
-        db.session.commit()
-        return redirect(url_for('index'))
+    if current_user.role == 'Admin':
+        del form.last_name
+        del form.first_name
+        del form.middle_name
+        del form.gender
+        del form.birth_date
+        del form.age
+        del form.birth_place
+        del form.religion
+        del form.present_address
+        del form.email
+        del form.contact_number
+        if form.validate_on_submit():
+            form.populate_obj(user)
+            db.session.add(user)
+            db.session.commit()
+            return redirect(url_for('index'))
     return render_template('user.html', user=user, form=form
         )
 
@@ -330,6 +361,12 @@ class UserView(ModelView, BaseView):
     column_filters = ['username', 'role', 'student_status']
     column_exclude_list = excluded_fields
     column_export_exclude_list = excluded_fields
+    form_choices = {
+        'role': [
+            ('Student', 'Student'),
+            ('Admin', 'Admin')
+        ]
+    }
 
     def is_accessible(self):
         return current_user.role =='Admin'
