@@ -17,7 +17,7 @@ from functools import wraps
 """config"""
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '128JSD*idfedf8ued89f7JHEDFjtw1143589123849iU*(UDF*D*F()D*F)(D*fjsdjfkj238490sdjfkjJDJFi(*)(&^&^*%tYYGHGhjBBb*H*hffJghgdfhkjk3eio2u3oiuqwoieuoiqyopolavofuiekghogsjdb*&&&DFOD&*F*(D&F*(DIOFUIKFHJDJHCKJVHJKCVkchvuhyiudyf8s9df98789743124789238UIOuFKAHDFKJAHDKLASHjkdgasgdhhasdgkjashdU(*&(*&*(*^^ASd876a7s6d87&&$^%$^#<F2>3234$#@121432!$25434%79^)*X&D(97_(A*Sd09POJZXd'
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgres://ljaavoeziccuxy:R1AYt8nzTJLR5tC-BfaM3fZ6sg@ec2-54-225-112-119.compute-1.amazonaws.com:5432/d9hrf2d6n9ifu9"
+app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:root@localhost/thesis"
 """set the school year"""
 app.config['CSY'] = '2016-2017'
 """set the enrollment"""
@@ -48,7 +48,7 @@ def logout_required(f):
 @login_manager.unauthorized_handler
 def unauthorized():
     flash('Unauthorized! Get out of here before I get mad, or you could just login/register.' )
-    return render_template('index.html')
+    return redirect(url_for('login', next=request.url))
 
 """forms"""
 class RegisterForm(Form):
@@ -166,7 +166,7 @@ def load_user(request):
         token = request.args.get('token')
 
     if token is not None:
-        username,password = token.split(":") # naive token
+        username,password = token.split(":") 
         user_entry = User.get(username)
         if (user_entry is not None):
             user = User(user_entry[0],user_entry[1])
@@ -323,7 +323,7 @@ def signup():
     return render_template('signup.html', form=form, username=username, password=password, student_status=student_status)
 """ModelView"""
 class UserView(ModelView, BaseView):
-    excluded_fields = ['password_hash', 'authenticated', 'gender', 'birth_date', 'age', 'birth_place', 'religion', 'present_address', 'email', 'contact_number', 'role']
+    excluded_fields = ['password_hash', 'gender', 'birth_date', 'age', 'birth_place', 'religion', 'present_address', 'email', 'contact_number', 'role']
     page_size = 10
     can_export = True
     can_view_details = True
@@ -334,6 +334,9 @@ class UserView(ModelView, BaseView):
     def is_accessible(self):
         return current_user.role =='Admin'
 
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for('login', next=request.url))
+
 class RegistrationView(ModelView, BaseView):
     page_size = 10
     can_export = True
@@ -341,6 +344,9 @@ class RegistrationView(ModelView, BaseView):
 
     def is_accessible(self):
         return current_user.role =='Admin'
+
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for('login', next=request.url))
 
 """Flask-Admin"""
 admin = Admin(app, name='Bnhs', template_mode='bootstrap3', index_view=None)
@@ -350,5 +356,5 @@ admin.add_view(RegistrationView(Registration, db.session))
 if __name__ == '__main__':
 #    db.drop_all()
     db.create_all()
-    app.run(debug=False)
+    app.run(debug=True, host='0.0.0.0')
 
