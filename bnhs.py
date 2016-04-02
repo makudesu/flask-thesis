@@ -9,7 +9,7 @@ from wtforms.validators import Required, EqualTo
 from flask.ext.sqlalchemy import SQLAlchemy
 
 from flask_admin import Admin, BaseView
-from flask_admin.contrib.sqla import ModelView
+from flask_admin.contrib.sqla import ModelView 
 
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
@@ -264,7 +264,7 @@ def enroll():
                         return render_template('graduate.html')
                     next_grade_level = grad_status.grade_level + int(1)
                     grad_status.current = False
-                    flash("Congratulations! You've passed your current grade. Your are now enrolled on Grade", next_grade_level)
+                    flash("Congratulations! You've passed your current grade. Your are now enrolled.")
                     enrolle = Registration(
                                 school_year = app.config['CSY'],
                                 stud_id = user.stud_id,
@@ -330,6 +330,10 @@ class UserView(ModelView, BaseView):
     column_filters = ['username', 'role', 'student_status']
     column_exclude_list = excluded_fields
     column_export_exclude_list = excluded_fields
+    form_choices = {'role': [
+        ('Admin', 'Administrator'),
+        ('Student', 'Student')
+    ]}
 
     def is_accessible(self):
         return current_user.role =='Admin'
@@ -341,6 +345,10 @@ class RegistrationView(ModelView, BaseView):
     page_size = 10
     can_export = True
     column_filters = ['school_year', 'grade_level', 'year_level_status']
+    form_choices = {'year_level_status': [
+        ('Passed', 'The Student Passed'),
+        ('Failed', 'The Student Failed')
+    ]}
 
     def is_accessible(self):
         return current_user.role =='Admin'
@@ -348,10 +356,39 @@ class RegistrationView(ModelView, BaseView):
     def inaccessible_callback(self, name, **kwargs):
         return redirect(url_for('login', next=request.url))
 
+class TeacherView(ModelView, BaseView):
+    excluded_fields = ['password_hash', 'gender', 'birth_date', 'age', 'birth_place', 'religion', 'present_address', 'email', 'contact_number', 'role']
+    excluded_form_columns = ['password_hash', 'gender', 'birth_date', 'age', 'birth_place', 'religion', 'present_address', 'email', 'contact_number', 'role','student_status', 'username', 'last_name', 'first_name', 'middle_name', 'last_name','authenticated']
+    page_size = 10
+    can_export = True
+    can_create = False
+    can_delete = False
+    form_excluded_columns = excluded_form_columns
+    column_filters = ['username', 'student_status']
+    column_exclude_list = excluded_fields
+    column_export_exclude_list = excluded_fields
+    inline_models = (Registration,)
+    can_delete = False
+    form_choices = {'role': [
+        ('Admin', 'Administrator'),
+        ('Student', 'Student'),
+        ('Teacher', 'Teacher')
+    ]}
+
+    def get_query(self):
+        return self.session.query(self.model).filter(self.model.role == 'Student')
+
+    def is_accessible(self):
+        return current_user.role == 'Admin' or current_user.role == 'Teacher'
+
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for('login', next=request.url))
+
 """Flask-Admin"""
 admin = Admin(app, name='Bnhs', template_mode='bootstrap3', index_view=None)
-admin.add_view(UserView(User, db.session))
+admin.add_view(UserView(User, db.session, endpoint='user-admin'))
 admin.add_view(RegistrationView(Registration, db.session))
+#admin.add_view(TeacherView(User, db.session, endpoint='user'))
 """main program"""
 if __name__ == '__main__':
 #    db.drop_all()
