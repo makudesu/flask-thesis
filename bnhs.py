@@ -9,6 +9,7 @@ from wtforms.validators import Required, EqualTo
 from flask.ext.sqlalchemy import SQLAlchemy
 
 from flask_admin import Admin, BaseView
+from flask.ext.admin.base import MenuLink
 from flask_admin.contrib.sqla import ModelView 
 
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -49,6 +50,16 @@ def logout_required(f):
 def unauthorized():
     flash('Unauthorized! Get out of here before I get mad, or you could just login/register.' )
     return redirect(url_for('login', next=request.url))
+
+class IsAdminMenuLink(MenuLink):
+
+    def is_accessible(self):
+        return current_user.role == 'Admin' or current_user.role == 'Teacher'
+
+class IsnotLoggedinMenuLink(MenuLink):
+    
+    def is_accessible(self):
+        return current_user.is_authenticated == False
 
 """forms"""
 class RegisterForm(Form):
@@ -390,6 +401,8 @@ class TeacherView(ModelView, BaseView):
 admin = Admin(app, name='Bnhs', template_mode='bootstrap3', index_view=None)
 admin.add_view(UserView(User, db.session, endpoint='user-admin'))
 admin.add_view(RegistrationView(Registration, db.session))
+admin.add_link(IsnotLoggedinMenuLink(name='Login', endpoint='login'))
+admin.add_link(IsAdminMenuLink(name='Logout', endpoint='logout'))
 #admin.add_view(TeacherView(User, db.session, endpoint='user'))
 """main program"""
 if __name__ == '__main__':
