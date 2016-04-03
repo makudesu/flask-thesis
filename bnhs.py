@@ -195,6 +195,8 @@ def login():
             db.session.add(user)
             db.session.commit()
             login_user(user, form.remember_me.data)
+            if current_user.role == 'Admin':
+                return redirect(url_for('admin.index'))
             return redirect(request.args.get('next') or url_for('index'))
         flash('Wrong Username and/or Password')
     return render_template('signin.html', form=form)
