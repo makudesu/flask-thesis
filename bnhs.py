@@ -90,7 +90,7 @@ class EnrollForm(Form):
     first_name = StringField('First Name', validators=[Required()])
     middle_name = StringField('Middle Name', validators=[Required()])
     gender = StringField('Gender', validators=[Required()])
-    birth_date = DateField('Birth Date', widget=DatePickerWidget(), validators=[Required()])
+    birth_date = StringField('Birth Date', validators=[Required()])
     age = StringField('Age', validators=[Required()])
     birth_place = StringField('Birth Place', validators=[Required()])
     religion = StringField('Religion', validators=[Required()])
@@ -406,7 +406,7 @@ admin.add_link(IsAdminMenuLink(name='Logout', endpoint='logout'))
 #admin.add_view(TeacherView(User, db.session, endpoint='user'))
 """main program"""
 if __name__ == '__main__':
-#    db.drop_all()
+    db.drop_all()
     db.create_all()
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True)
 
