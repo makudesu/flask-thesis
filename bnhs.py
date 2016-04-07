@@ -18,7 +18,8 @@ from functools import wraps
 """config"""
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '128JSD*idfedf8ued89f7JHEDFjtw1143589123849iU*(UDF*D*F()D*F)(D*fjsdjfkj238490sdjfkjJDJFi(*)(&^&^*%tYYGHGhjBBb*H*hffJghgdfhkjk3eio2u3oiuqwoieuoiqyopolavofuiekghogsjdb*&&&DFOD&*F*(D&F*(DIOFUIKFHJDJHCKJVHJKCVkchvuhyiudyf8s9df98789743124789238UIOuFKAHDFKJAHDKLASHjkdgasgdhhasdgkjashdU(*&(*&*(*^^ASd876a7s6d87&&$^%$^#<F2>3234$#@121432!$25434%79^)*X&D(97_(A*Sd09POJZXd'
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgres://ljaavoeziccuxy:R1AYt8nzTJLR5tC-BfaM3fZ6sg@ec2-54-225-112-119.compute-1.amazonaws.com:5432/d9hrf2d6n9ifu9"
+#app.config['SQLALCHEMY_DATABASE_URI'] = "postgres://ljaavoeziccuxy:R1AYt8nzTJLR5tC-BfaM3fZ6sg@ec2-54-225-112-119.compute-1.amazonaws.com:5432/d9hrf2d6n9ifu9"
+app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:root@localhost/thesis"
 """set the school year"""
 app.config['CSY'] = '2016-2017'
 """set the enrollment"""
@@ -236,26 +237,88 @@ def user():
     return render_template('user.html', user=user, form=form
         )
 
+class EnrollmentLogic:
+
+    def __init__(self):
+        self.grad_status = Registration.query.filter_by(stud_id = current_user.stud_id).filter_by(current = True).first()
+        self.user = User.query.filter_by(username=current_user.username).first()
+        self.grade = self.user.student_status
+        self.enrollee = Registration(
+            school_year = app.config['CSY'],
+            stud_id = self.user.stud_id,
+            grade_level = self.next_level(),
+            year_level_status = 'Enrolled'
+        )
+
+    def is_admin(self):
+        if current_user.role == 'Admin':
+            return True
+
+    def grade_status_is_none(self):
+        if self.grad_status is None:
+            return True
+
+    def is_transferee(self):
+        if self.grade  == str('New') or self.grade == str('Old'):
+            return True
+
+    def grade_trans(self):
+        if self.grade == "Trans":
+            return True
+
+    def grade_new(self):
+        if self.grade == "New":
+            return True
+
+    def grade_old(self):
+        if self.grade == "Old":
+            return True
+
+    def is_enrolled(self):
+        if self.grad_status.year_level_status == 'Enrolled':
+            return True
+
+    def is_passed(self):
+        if self.grad_status.year_level_status == 'Passed':
+            return True
+
+    def is_failed(self):
+        if self.grad_status.year_level_status == 'Failed':
+            return True
+
+    def is_graduate(self):
+        if self.grad_status.grade_level >= int(12):
+            return True
+
+    def next_level(self):
+        self.next_grade_level = int(7)
+        current_user.student_status = 'Old'
+        if self.grad_status is None:
+            pass
+        elif self.is_passed():
+            self.next_grade_level = self.grad_status.grade_level + int(1)
+        elif self.is_failed():
+            self.next_grade_level = self.grad_status.grade_level
+            self.grad_status.current = False
+        return self.next_grade_level
+
+
 @app.route('/enroll/', methods=['GET', 'POST'])
 @login_required
 def enroll():
     if not app.config['Enrollment']:
         return render_template('enrollment_unavailable.html')
     form = EnrollmentForm()
-    user = User.query.filter_by(username=current_user.username).first()
-    grade = user.student_status
-    grad_status = Registration.query.filter_by(stud_id = current_user.stud_id).filter_by(current = True).first()
-    if grad_status is None:
-        if current_user.role == 'Admin':
+    e = EnrollmentLogic()
+    if e.grade_status_is_none():
+        if e.is_admin():
             flash("You're the admin. The Registration page is intended for students only.")
             return render_template('enrollment_unavailable.html')
         flash("Registration is on going. You can now enroll.")
-    if grade  == str('New'):
-        del form.grade_level
-    if grade  == str('Old'):
+    if e.is_transferee():
         del form.grade_level
     if form.validate_on_submit():
-        if grade == "Trans":
+        if e.grade_trans():
             flash("Please choose your Grade.")
             enrolle = Registration(
                         school_year = app.config['CSY'],
@@ -267,48 +330,31 @@ def enroll():
             db.session.add(enrolle)
             db.session.commit()
             return redirect(url_for('index'))
-        elif grade == "Old":
-            grad_status = Registration.query.filter_by(stud_id = current_user.stud_id).filter_by(current = True).first()
-            if grad_status is not None:
-                if grad_status.year_level_status == 'Enrolled':
+        elif e.grade_old():
+            if not e.grade_status_is_none():
+                if e.is_enrolled():
                     flash('You are already enrolled.')
-                if grad_status.year_level_status == 'Passed':
-                    if grad_status.grade_level >= int(12):
+                if e.is_passed():
+                    if e.is_graduate():
                         return render_template('graduate.html')
-                    next_grade_level = grad_status.grade_level + int(1)
-                    grad_status.current = False
+                    e.grad_status.current = False
                     flash("Congratulations! You've passed your current grade. Your are now enrolled.")
-                    enrolle = Registration(
-                                school_year = app.config['CSY'],
-                                stud_id = user.stud_id,
-                                grade_level = next_grade_level,
-                                year_level_status = 'Enrolled'
-                                )
-                    db.session.add(enrolle)
+                    db.session.add(e.enrollee)
                     db.session.commit()
-                elif grad_status.year_level_status == 'Failed':
+                elif e.is_failed():
                     flash('Unfortunately you failed.')
-                    same_grade_level = grad_status.grade_level
-                    grad_status.current = False
-                    enrolle = Registration(
-                                school_year = app.config['CSY'],
-                                stud_id = user.stud_id,
-                                grade_level = same_grade_level,
-                                year_level_status = 'Enrolled'
-                                )
-                    db.session.add(enrolle)
+                    db.session.add(e.enrollee)
                     db.session.commit()
-        elif grade =='New':
+        elif e.grade_new():
             flash('You are enrolled in Grade 7')
             enrolle = Registration(
                         school_year = app.config['CSY'],
-                        stud_id = user.stud_id,
+                        stud_id = e.user.stud_id,
                         grade_level = '7',
                         year_level_status = 'Enrolled'
                         )
-            current_user.student_status = 'Old'
-            db.session.add(user)
-            db.session.add(enrolle)
+            db.session.add(e.user)
+            db.session.add(e.enrollee)
             db.session.commit()
     return render_template('enroll.html', form=form)
 
@@ -348,14 +394,14 @@ class UserView(ModelView, BaseView):
         ('Student', 'Student')
     ]}
 
-    def is_accessible(self):
-        return current_user.role =='Admin'
+#    def is_accessible(self):
+#        return current_user.role =='Admin'
 
-    def inaccessible_callback(self, name, **kwargs):
-        return redirect(url_for('login', next=request.url))
+#    def inaccessible_callback(self, name, **kwargs):
+#        return redirect(url_for('login', next=request.url))
 
 class RegistrationView(ModelView, BaseView):
-    page_size = 10
+    page_size = 100
     can_export = True
     column_filters = ['school_year', 'grade_level', 'year_level_status']
     form_choices = {'year_level_status': [
@@ -363,11 +409,11 @@ class RegistrationView(ModelView, BaseView):
         ('Failed', 'The Student Failed')
     ]}
 
-    def is_accessible(self):
-        return current_user.role =='Admin'
+#    def is_accessible(self):
+#        return current_user.role =='Admin'
 
-    def inaccessible_callback(self, name, **kwargs):
-        return redirect(url_for('login', next=request.url))
+#    def inaccessible_callback(self, name, **kwargs):
+#        return redirect(url_for('login', next=request.url))
 
 class TeacherView(ModelView, BaseView):
     excluded_fields = ['password_hash', 'gender', 'birth_date', 'age', 'birth_place', 'religion', 'present_address', 'email', 'contact_number', 'role']
@@ -406,7 +452,7 @@ admin.add_link(IsAdminMenuLink(name='Logout', endpoint='logout'))
 #admin.add_view(TeacherView(User, db.session, endpoint='user'))
 """main program"""
 if __name__ == '__main__':
-    db.drop_all()
+#    db.drop_all()
     db.create_all()
     app.run(debug=True)
 
