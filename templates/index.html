@@ -1,9 +1,18 @@
 {% extends "base.html" %}
+{% block styles %}
+{{super()}}
+<link rel="stylesheet"
+      href="{{url_for('.static', filename='custom.css')}}">
+{% endblock %}
 {% block title %} BNHS {% endblock %}
-
 {% block page_content %}
 <div class="page-header">
-    <h1>Welcome to BNHS</h1>
+    <div class="jumbotron">
+        <div class="container">
+        <h1>Welcome to BNHS</h1>
+        <p>Hello World</p>
+        </div>
+    </div>
 </div>
 
             <h3 class="text-center" >Vision</h3>
