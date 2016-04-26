@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block styles %}
 {{super()}}
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
 {% endblock %}
 {% block title %} BNHS {% endblock %}
 {% block page_content %}
@@ -9,11 +10,23 @@
         <div class="container">
         <h1>BNHS</h1>
             <p class="lead">Bambang National High School <br> Address: Boyie St,Pan - Philippine Hwy,Buag, Bambang, Nueva Vizcaya, Philippines<br>Phone:+63 78 803 1587<p>
+
+        {% if current_user.is_authenticated %}
+
         <hr class="m-y-2">
             <p>Join us. Enroll now!</p>
         <p class="lead">
+            <a class="btn btn-primary btn-lg" href="{{ url_for('enroll') }}" role="button">Enroll Now</a>
+      </p>
+
+        {% else %}
+
+        <hr class="m-y-2">
+            <p>Join us. Sign Up now!</p>
+        <p class="lead">
             <a class="btn btn-primary btn-lg" href="{{ url_for('signup') }}" role="button">Sign up today</a>
       </p>
+         {% endif %}
         </div>
     </div>
 </div>
