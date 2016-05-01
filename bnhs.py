@@ -2,7 +2,6 @@ from flask import Flask, render_template, flash, request, url_for, redirect, ses
 from flask.ext.bootstrap import Bootstrap
 from flask.ext.wtf import Form, RecaptchaField
 from flask.ext.login import UserMixin, LoginManager, login_required, login_user, logout_user, current_user, AnonymousUserMixin
-from flask.ext.admin.form.widgets import DatePickerWidget
 from wtforms import StringField, SubmitField, PasswordField, SelectField, BooleanField, IntegerField, DateField
 from wtforms.validators import Required, EqualTo
 
@@ -81,7 +80,7 @@ class RegisterForm(Form):
         ],
         validators=[Required()])
     recaptcha = RecaptchaField()
-    submit = SubmitField('Submit')
+    submit = SubmitField('Register')
 
 class LoginForm(Form):
     username = StringField('username', validators=[Required()])
