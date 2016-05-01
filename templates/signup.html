@@ -18,6 +18,7 @@
     </div>
     {{ form.csrf_token }}
     {{ wtf.quick_form(form) }}
+    {{ form.recaptcha }}
     {% endblock %}
 </div>
 {% endblock %}

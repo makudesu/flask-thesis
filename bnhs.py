@@ -1,6 +1,6 @@
 from flask import Flask, render_template, flash, request, url_for, redirect, session, Response
 from flask.ext.bootstrap import Bootstrap
-from flask.ext.wtf import Form
+from flask.ext.wtf import Form, RecaptchaField
 from flask.ext.login import UserMixin, LoginManager, login_required, login_user, logout_user, current_user, AnonymousUserMixin
 from flask.ext.admin.form.widgets import DatePickerWidget
 from wtforms import StringField, SubmitField, PasswordField, SelectField, BooleanField, IntegerField, DateField
@@ -18,12 +18,17 @@ from functools import wraps
 """config"""
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '128JSD*idfedf8ued89f7JHEDFjtw1143589123849iU*(UDF*D*F()D*F)(D*fjsdjfkj238490sdjfkjJDJFi(*)(&^&^*%tYYGHGhjBBb*H*hffJghgdfhkjk3eio2u3oiuqwoieuoiqyopolavofuiekghogsjdb*&&&DFOD&*F*(D&F*(DIOFUIKFHJDJHCKJVHJKCVkchvuhyiudyf8s9df98789743124789238UIOuFKAHDFKJAHDKLASHjkdgasgdhhasdgkjashdU(*&(*&*(*^^ASd876a7s6d87&&$^%$^#<F2>3234$#@121432!$25434%79^)*X&D(97_(A*Sd09POJZXd'
-#app.config['SQLALCHEMY_DATABASE_URI'] = "postgres://ljaavoeziccuxy:R1AYt8nzTJLR5tC-BfaM3fZ6sg@ec2-54-225-112-119.compute-1.amazonaws.com:5432/d9hrf2d6n9ifu9"
-app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:root@localhost/thesis"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgres://ljaavoeziccuxy:R1AYt8nzTJLR5tC-BfaM3fZ6sg@ec2-54-225-112-119.compute-1.amazonaws.com:5432/d9hrf2d6n9ifu9"
+#app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:root@localhost/thesis"
 """set the school year"""
 app.config['CSY'] = '2016-2017'
 """set the enrollment"""
 app.config['Enrollment'] = True
+#recaptcha
+app.config['RECAPTCHA_USE_SSL'] = True
+app.config['RECAPTCHA_PUBLIC_KEY'] = '6LdyyB4TAAAAAMLx8wYShiHU3AsSbRCBdFnp8L1N'
+app.config['RECAPTCHA_PRIVATE_KEY'] = '6LdyyB4TAAAAAMtj9CGXKjuOBN3RflEWaXacx-t3'
+app.config['RECAPTCHA_OPTIONS'] = {'theme': 'white'}
 #app.config['SQLALCHEMY_DATABASE_URI'] = "postgres://vwuktasevlatqt:c-gzQ-avJEw5mlufChylQ25OKy@ec2-54-204-30-115.compute-1.amazonaws.com:5432/d8gppbdark5i8f"
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
@@ -75,6 +80,7 @@ class RegisterForm(Form):
         ('Trans', 'Transferee')
         ],
         validators=[Required()])
+    recaptcha = RecaptchaField()
     submit = SubmitField('Submit')
 
 class LoginForm(Form):
