@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
+{% block styles %}
+{{super()}}
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+{% endblock %}
+
 {% block title %} BNHS-User {% endblock %}
 
 {% block content %}
@@ -14,10 +19,34 @@
 
     {% block page_content %}
     <div class="page-header">
-        <h1>Sign in</h1>
+        <h2>Please Sign in</h2>
     </div>
-    {{ form.csrf_token }}
-    {{ wtf.quick_form(form) }}
+
+<div class="container">
+ 
+       <form method="POST" action="/login/" class="form-signin">
+
+         <div class="input-group margin-bottom-sm">
+             <span class="input-group-addon"><i class="fa fa-user fa-fw" aria-hidden="true"></i></span>
+             <input class="form-control" type="text"                    placeholder="Username" required autofocus>
+         </div>
+
+         <div class="input-group">
+             <span class="input-group-addon"><i class="fa fa-key fa-fw" aria-hidden="true"></i></span>
+             <input class="form-control" type="password" placeholder="Password">
+         </div>
+
+         <div class="checkbox">
+           <label>
+             <input type="checkbox" value="remember-me"> Remember me
+           </label>
+         </div>
+         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</    button>
+
+       </form>
+ 
+     </div> 
+
     {% endblock %}
 </div>
 {% endblock %}
