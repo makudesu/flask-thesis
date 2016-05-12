@@ -1,9 +1,5 @@
+<html>
 {% extends "base.html" %}
-{% block styles %}
-{{super()}}
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
-        <link rel=stylesheet type=text/css href="{{ url_for('static', filename='customize.css') }}">
-{% endblock %}
 {% block title %} BNHS {% endblock %}
 {% block page_content %}
 <div class="page-header">
@@ -63,5 +59,6 @@
         </div>
     </div>
 </div>
-{% include "footer.html" %}
 {% endblock %}
+{% include "footer.html" %}
+</html>

@@ -1,3 +1,4 @@
+<html>
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 {% block title %} BNHS {% endblock %}
@@ -12,5 +13,6 @@
     {{ form.csrf_token }}
     {{ wtf.quick_form(form) }}
     </div>
-{% include "footer.html" %}
 {% endblock %}
+{% include "footer.html" %}
+</html>
