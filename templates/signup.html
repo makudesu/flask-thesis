@@ -13,11 +13,16 @@
     {% endfor %}
 
     {% block page_content %}
-    <div class="page-header">
-        <h1>Register</h1>
+    <div class="container">
+        <div class="page-header">
+            <h1>Register</h1>
+        </div>
     </div>
-    {{ form.csrf_token }}
-    {{ wtf.quick_form(form) }}
+    <div class="container">
+        {{ form.csrf_token }}
+        {{ wtf.quick_form(form) }}
+    </div>
     {% endblock %}
 </div>
+{% include "footer.html" %}
 {% endblock %}

@@ -2,6 +2,7 @@
 {% block styles %}
 {{super()}}
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+        <link rel=stylesheet type=text/css href="{{ url_for('static', filename='customize.css') }}">
 {% endblock %}
 {% block title %} BNHS {% endblock %}
 {% block page_content %}
@@ -32,8 +33,8 @@
 </div>
 
 <div class="container">
-    <div class="row">
-        <div class="col-sm-4">
+    <div class="row row-centered">
+        <div class="col-sm-4 col-centered">
             <h3 class="text-center" >Mission</h3>
     To protect and promote the right of every filipino to quality, equitable, culture-based, and complete basic education where:
 
@@ -46,19 +47,21 @@
     Family, community, and other stakeholders are actively engaged and share responsibility for developing life-long learners
         </div>
 
-        <div class="col-sm-4">
+        <div class="col-sm-4 col-centered">
             <h3 class="text-center" >Vision</h3>
     We dream of filipino who passionately love their country and whose values and competencies enable them to realize their full potential and contribute meaningfully to building the nation.
 
             the department of education continuously improve itself to better serve its stakeholders
         </div>
 
-        <div class="col-sm-4">
+        <div class="col-sm-4 col-centered">
             <h3 class="text-center" >Core values</h3>
         Maka-Diyos<br>
         Maka-Tao<br>
         Makakalikasan<br>
         Makabansa
         </div>
-
+    </div>
+</div>
+{% include "footer.html" %}
 {% endblock %}
