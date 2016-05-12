@@ -1,0 +1,147 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+Anonymous	bnhs.py	/^class Anonymous(AnonymousUserMixin):$/;"	c
+EnrollForm	bnhs.py	/^class EnrollForm(Form):$/;"	c
+EnrollmentForm	bnhs.py	/^class EnrollmentForm(Form):$/;"	c
+EnrollmentLogic	bnhs.py	/^class EnrollmentLogic:$/;"	c
+IsAdminMenuLink	bnhs.py	/^class IsAdminMenuLink(MenuLink):$/;"	c
+IsnotLoggedinMenuLink	bnhs.py	/^class IsnotLoggedinMenuLink(MenuLink):$/;"	c
+LoginForm	bnhs.py	/^class LoginForm(Form):$/;"	c
+NameForm	index.py	/^class NameForm(Form):$/;"	c
+RegisterForm	bnhs.py	/^class RegisterForm(Form):$/;"	c
+Registration	bnhs.py	/^class Registration(db.Model):$/;"	c
+RegistrationView	bnhs.py	/^class RegistrationView(ModelView, BaseView):$/;"	c
+TeacherView	bnhs.py	/^class TeacherView(ModelView, BaseView):$/;"	c
+User	bnhs.py	/^class User(UserMixin, db.Model):$/;"	c
+UserView	bnhs.py	/^class UserView(ModelView, BaseView):$/;"	c
+__init__	bnhs.py	/^    def __init__(self):$/;"	m	class:Anonymous
+__init__	bnhs.py	/^    def __init__(self):$/;"	m	class:EnrollmentLogic
+__repr__	bnhs.py	/^    def __repr__(self):$/;"	m	class:Registration	file:
+__repr__	bnhs.py	/^    def __repr__(self):$/;"	m	class:User	file:
+admin	bnhs.py	/^admin = Admin(app, name='Bnhs', template_mode='bootstrap3', index_view=None)$/;"	v
+admin	index.py	/^def admin():$/;"	f
+age	bnhs.py	/^    age = StringField('Age', validators=[Required()])$/;"	v	class:EnrollForm
+age	bnhs.py	/^    age = db.Column(db.Integer)$/;"	v	class:User
+app	bnhs.py	/^app = Flask(__name__)$/;"	v
+birth_date	bnhs.py	/^    birth_date = StringField('Birth Date', validators=[Required()])$/;"	v	class:EnrollForm
+birth_date	bnhs.py	/^    birth_date = db.Column(db.String(64))$/;"	v	class:User
+birth_place	bnhs.py	/^    birth_place = StringField('Birth Place', validators=[Required()])$/;"	v	class:EnrollForm
+birth_place	bnhs.py	/^    birth_place = db.Column(db.String(64))$/;"	v	class:User
+can_create	bnhs.py	/^    can_create = False$/;"	v	class:TeacherView
+can_delete	bnhs.py	/^    can_delete = False$/;"	v	class:TeacherView
+can_export	bnhs.py	/^    can_export = True$/;"	v	class:RegistrationView
+can_export	bnhs.py	/^    can_export = True$/;"	v	class:TeacherView
+can_export	bnhs.py	/^    can_export = True$/;"	v	class:UserView
+can_view_details	bnhs.py	/^    can_view_details = True$/;"	v	class:UserView
+change	bnhs.py	/^def change():$/;"	f
+column_exclude_list	bnhs.py	/^    column_exclude_list = excluded_fields$/;"	v	class:TeacherView
+column_exclude_list	bnhs.py	/^    column_exclude_list = excluded_fields$/;"	v	class:UserView
+column_export_exclude_list	bnhs.py	/^    column_export_exclude_list = excluded_fields$/;"	v	class:TeacherView
+column_export_exclude_list	bnhs.py	/^    column_export_exclude_list = excluded_fields$/;"	v	class:UserView
+column_filters	bnhs.py	/^    column_filters = ['school_year', 'grade_level', 'year_level_status']$/;"	v	class:RegistrationView
+column_filters	bnhs.py	/^    column_filters = ['username', 'role', 'student_status']$/;"	v	class:UserView
+column_filters	bnhs.py	/^    column_filters = ['username', 'student_status']$/;"	v	class:TeacherView
+confirm	bnhs.py	/^    confirm = PasswordField('Confirm Password', validators=[Required()])$/;"	v	class:RegisterForm
+contact_number	bnhs.py	/^    contact_number = IntegerField('Contact Number', validators=[Required()])$/;"	v	class:EnrollForm
+contact_number	bnhs.py	/^    contact_number = db.Column(db.Integer)$/;"	v	class:User
+current	bnhs.py	/^    current = db.Column(db.Boolean, default=True)$/;"	v	class:Registration
+db	bnhs.py	/^db = SQLAlchemy(app)$/;"	v
+decorated_function	bnhs.py	/^    def decorated_function(*args, **kwargs):$/;"	f	function:logout_required
+email	bnhs.py	/^    email = StringField('Email', validators=[Required()])$/;"	v	class:EnrollForm
+email	bnhs.py	/^    email = db.Column(db.String(64))$/;"	v	class:User
+email	index.py	/^    email = StringField('Email Address', validators=[Required()])$/;"	v	class:NameForm
+enroll	bnhs.py	/^def enroll():$/;"	f
+enroll	index.py	/^def enroll():$/;"	f
+excluded_fields	bnhs.py	/^    excluded_fields = ['password_hash', 'gender', 'birth_date', 'age', 'birth_place', 'religion', 'present_address', 'email', 'contact_number', 'role']$/;"	v	class:TeacherView
+excluded_fields	bnhs.py	/^    excluded_fields = ['password_hash', 'gender', 'birth_date', 'age', 'birth_place', 'religion', 'present_address', 'email', 'contact_number', 'role']$/;"	v	class:UserView
+excluded_form_columns	bnhs.py	/^    excluded_form_columns = ['password_hash', 'gender', 'birth_date', 'age', 'birth_place', 'religion', 'present_address', 'email', 'contact_number', 'role','student_status', 'username', 'last_name', 'first_name', 'middle_name', 'last_name','authenticated']$/;"	v	class:TeacherView
+first_name	bnhs.py	/^    first_name = StringField('First Name', validators=[Required()])$/;"	v	class:EnrollForm
+first_name	bnhs.py	/^    first_name = db.Column(db.String(64))$/;"	v	class:User
+form_choices	bnhs.py	/^    form_choices = {'role': [$/;"	v	class:TeacherView
+form_choices	bnhs.py	/^    form_choices = {'role': [$/;"	v	class:UserView
+form_choices	bnhs.py	/^    form_choices = {'year_level_status': [$/;"	v	class:RegistrationView
+form_excluded_columns	bnhs.py	/^    form_excluded_columns = excluded_form_columns$/;"	v	class:TeacherView
+gender	bnhs.py	/^    gender = StringField('Gender', validators=[Required()])$/;"	v	class:EnrollForm
+gender	bnhs.py	/^    gender = db.Column(db.String(64))$/;"	v	class:User
+get_id	bnhs.py	/^    def get_id(self):$/;"	m	class:User
+get_query	bnhs.py	/^    def get_query(self):$/;"	m	class:TeacherView
+grade_level	bnhs.py	/^    grade_level = SelectField('Grade Level', choices = [$/;"	v	class:EnrollmentForm
+grade_level	bnhs.py	/^    grade_level = db.Column(db.Integer, default='6')$/;"	v	class:Registration
+grade_new	bnhs.py	/^    def grade_new(self):$/;"	m	class:EnrollmentLogic
+grade_old	bnhs.py	/^    def grade_old(self):$/;"	m	class:EnrollmentLogic
+grade_status_is_none	bnhs.py	/^    def grade_status_is_none(self):$/;"	m	class:EnrollmentLogic
+grade_trans	bnhs.py	/^    def grade_trans(self):$/;"	m	class:EnrollmentLogic
+id	bnhs.py	/^    id = db.Column(db.Integer, primary_key=True)$/;"	v	class:Registration
+inaccessible_callback	bnhs.py	/^    def inaccessible_callback(self, name, **kwargs):$/;"	m	class:RegistrationView
+inaccessible_callback	bnhs.py	/^    def inaccessible_callback(self, name, **kwargs):$/;"	m	class:TeacherView
+index	bnhs.py	/^def index():$/;"	f
+index	index.py	/^def index():$/;"	f
+inline_models	bnhs.py	/^    inline_models = (Registration,)$/;"	v	class:TeacherView
+is_accessible	bnhs.py	/^    def is_accessible(self):$/;"	m	class:IsAdminMenuLink
+is_accessible	bnhs.py	/^    def is_accessible(self):$/;"	m	class:IsnotLoggedinMenuLink
+is_accessible	bnhs.py	/^    def is_accessible(self):$/;"	m	class:RegistrationView
+is_accessible	bnhs.py	/^    def is_accessible(self):$/;"	m	class:TeacherView
+is_admin	bnhs.py	/^    def is_admin(self):$/;"	m	class:EnrollmentLogic
+is_anonymous	bnhs.py	/^    def is_anonymous(self):$/;"	m	class:User
+is_authenticated	bnhs.py	/^    def is_authenticated(self):$/;"	m	class:User
+is_enrolled	bnhs.py	/^    def is_enrolled(self):$/;"	m	class:EnrollmentLogic
+is_failed	bnhs.py	/^    def is_failed(self):$/;"	m	class:EnrollmentLogic
+is_graduate	bnhs.py	/^    def is_graduate(self):$/;"	m	class:EnrollmentLogic
+is_passed	bnhs.py	/^    def is_passed(self):$/;"	m	class:EnrollmentLogic
+is_transferee	bnhs.py	/^    def is_transferee(self):$/;"	m	class:EnrollmentLogic
+kevin	index.py	/^kevin = Flask(__name__)$/;"	v
+last_name	bnhs.py	/^    last_name = StringField('Last Name', validators=[Required()])$/;"	v	class:EnrollForm
+last_name	bnhs.py	/^    last_name = db.Column(db.String(64))$/;"	v	class:User
+load_user	bnhs.py	/^def load_user(request):$/;"	f
+load_user	bnhs.py	/^def load_user(user_id):$/;"	f
+login	bnhs.py	/^def login():$/;"	f
+login_manager	bnhs.py	/^login_manager = LoginManager()$/;"	v
+logout	bnhs.py	/^def logout():$/;"	f
+logout	index.py	/^def logout():$/;"	f
+logout_required	bnhs.py	/^def logout_required(f):$/;"	f
+middle_name	bnhs.py	/^    middle_name = StringField('Middle Name', validators=[Required()])$/;"	v	class:EnrollForm
+middle_name	bnhs.py	/^    middle_name = db.Column(db.String(64))$/;"	v	class:User
+next_level	bnhs.py	/^    def next_level(self):$/;"	m	class:EnrollmentLogic
+page_size	bnhs.py	/^    page_size = 10$/;"	v	class:TeacherView
+page_size	bnhs.py	/^    page_size = 10$/;"	v	class:UserView
+page_size	bnhs.py	/^    page_size = 100$/;"	v	class:RegistrationView
+password	bnhs.py	/^    def password(self):$/;"	m	class:User
+password	bnhs.py	/^    def password(self, password):$/;"	m	class:User
+password	bnhs.py	/^    password = PasswordField('Password', validators=[$/;"	v	class:RegisterForm
+password	bnhs.py	/^    password = PasswordField('Password', validators=[Required()])$/;"	v	class:LoginForm
+password	index.py	/^    password = StringField('Password', validators=[Required()])$/;"	v	class:NameForm
+password_hash	bnhs.py	/^    password_hash = db.Column(db.String(128))$/;"	v	class:User
+present_address	bnhs.py	/^    present_address = StringField('Present Address', validators=[Required()])$/;"	v	class:EnrollForm
+present_address	bnhs.py	/^    present_address = db.Column(db.String(64))$/;"	v	class:User
+religion	bnhs.py	/^    religion = StringField('Religion', validators=[Required()])$/;"	v	class:EnrollForm
+religion	bnhs.py	/^    religion = db.Column(db.String(64))$/;"	v	class:User
+remember_me	bnhs.py	/^    remember_me = BooleanField('Keep me logged in')$/;"	v	class:LoginForm
+role	bnhs.py	/^    role = db.Column(db.String(64), default='Student')$/;"	v	class:User
+school_year	bnhs.py	/^    school_year = db.Column(db.String(64))$/;"	v	class:Registration
+signin	index.py	/^def signin():$/;"	f
+signup	bnhs.py	/^def signup():$/;"	f
+signup	index.py	/^def signup():$/;"	f
+stud_id	bnhs.py	/^    stud_id = db.Column(db.Integer, db.ForeignKey('user.stud_id'), nullable=True)$/;"	v	class:Registration
+stud_id	bnhs.py	/^    stud_id = db.Column(db.Integer, primary_key=True)$/;"	v	class:User
+student_status	bnhs.py	/^    student_status = SelectField(u'Student Type', choices = [$/;"	v	class:RegisterForm
+student_status	bnhs.py	/^    student_status = db.Column(db.String(64))$/;"	v	class:User
+submit	bnhs.py	/^    submit = SubmitField('Enroll')$/;"	v	class:EnrollmentForm
+submit	bnhs.py	/^    submit = SubmitField('Log In')$/;"	v	class:LoginForm
+submit	bnhs.py	/^    submit = SubmitField('Save')$/;"	v	class:EnrollForm
+submit	bnhs.py	/^    submit = SubmitField('Submit')$/;"	v	class:RegisterForm
+submit	index.py	/^    submit = SubmitField('Submit')$/;"	v	class:NameForm
+unauthorized	bnhs.py	/^def unauthorized():$/;"	f
+user	bnhs.py	/^    user = db.relationship('Registration', backref='registration')$/;"	v	class:User
+user	bnhs.py	/^def user():$/;"	f
+username	bnhs.py	/^    username = StringField('Username', validators=[Required()])$/;"	v	class:EnrollForm
+username	bnhs.py	/^    username = StringField('username', validators=[Required()])$/;"	v	class:LoginForm
+username	bnhs.py	/^    username = StringField('username', validators=[Required()])$/;"	v	class:RegisterForm
+username	bnhs.py	/^    username = db.Column(db.String(64), unique=True, index=True)$/;"	v	class:User
+validators	bnhs.py	/^        validators=[Required()])$/;"	v	class:EnrollmentForm
+validators	bnhs.py	/^        validators=[Required()])$/;"	v	class:RegisterForm
+verify_password	bnhs.py	/^    def verify_password(self, password):$/;"	m	class:User
+year_level_status	bnhs.py	/^    year_level_status = db.Column(db.String(10))$/;"	v	class:Registration

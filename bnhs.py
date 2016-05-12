@@ -83,6 +83,13 @@ class LoginForm(Form):
     remember_me = BooleanField('Keep me logged in')
     submit = SubmitField('Log In')
 
+class ChangePasswordForm(Form):
+    password = PasswordField('Password', validators=[
+        Required(),
+        EqualTo('confirm', message='Passwords must match')
+        ])
+    confirm = PasswordField('Confirm Password', validators=[Required()])
+    submit = SubmitField('Change Password')
 
 class EnrollForm(Form):
     username = StringField('Username', validators=[Required()])
@@ -303,6 +310,18 @@ class EnrollmentLogic:
             self.grad_status.current = False
         return self.next_grade_level
 
+@app.route('/change/', methods=['GET', 'POST'])
+@login_required
+def change():
+    user = User.query.filter_by(username=current_user.username).first()
+    form = ChangePasswordForm(obj=user)
+    if form.validate_on_submit():
+        form.populate_obj(user)
+        db.session.add(user)
+        db.session.commit()
+        return redirect(url_for('index'))
+    return render_template('change_password.html', user=user, form=form
+        )
 
 @app.route('/enroll/', methods=['GET', 'POST'])
 @login_required
