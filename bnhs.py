@@ -1,7 +1,7 @@
 from flask import Flask, render_template, flash, request, url_for, redirect, session, Response
 from flask.ext.bootstrap import Bootstrap
 from flask.ext.wtf import Form
-from flask.ext.login import UserMixin, LoginManager, login_required, login_user, logout_user, current_user, AnonymousUserMixin
+from flask.ext.login import UserMixin, LoginManager, login_required, login_user, logout_user, current_user, AnonymousUserMixin, fresh_login_required
 from wtforms import StringField, SubmitField, PasswordField, SelectField, BooleanField, IntegerField, DateField
 from wtforms.validators import Required, EqualTo
 
@@ -28,6 +28,11 @@ login_manager = LoginManager()
 login_manager.session_protection = 'strong'
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+login_manager.refresh_view = "login"
+login_manager.needs_refresh_message = (
+    u"To protect your account, please reauthenticate to access this page."
+    )
+login_manager.needs_refresh_message_category = "info"
 Bootstrap(app)
 db = SQLAlchemy(app)
 class Anonymous(AnonymousUserMixin):
@@ -310,7 +315,7 @@ class EnrollmentLogic:
         return self.next_grade_level
 
 @app.route('/change/', methods=['GET', 'POST'])
-@login_required
+@fresh_login_required
 def change():
     user = User.query.filter_by(username=current_user.username).first()
     form = ChangePasswordForm(obj=user)
