@@ -1,6 +1,6 @@
 from flask import Flask, render_template, flash, request, url_for, redirect, session, Response
 from flask.ext.bootstrap import Bootstrap
-from flask.ext.wtf import Form
+from flask.ext.wtf import Form, RecaptchaField
 from flask.ext.login import UserMixin, LoginManager, login_required, login_user, logout_user, current_user, AnonymousUserMixin, fresh_login_required
 from wtforms import StringField, SubmitField, PasswordField, SelectField, BooleanField, IntegerField, DateField
 from wtforms.validators import Required, EqualTo
@@ -424,11 +424,11 @@ class UserView(ModelView, BaseView):
         ('Student', 'Student')
     ]}
 
-#    def is_accessible(self):
-#        return current_user.role =='Admin'
+    def is_accessible(self):
+        return current_user.role =='Admin'
 
-#    def inaccessible_callback(self, name, **kwargs):
-#        return redirect(url_for('login', next=request.url))
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for('login', next=request.url))
 
 class RegistrationView(ModelView, BaseView):
     page_size = 100
@@ -483,6 +483,6 @@ admin.add_link(IsAdminMenuLink(name='Logout', endpoint='logout'))
 """main program"""
 if __name__ == '__main__':
 #    db.drop_all()
-    db.create_all()
+#    db.create_all()
     app.run(debug=True)
 
