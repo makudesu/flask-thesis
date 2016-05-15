@@ -2,11 +2,6 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
-{% block styles %}
-{{super()}}
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
-{% endblock %}
-
 {% block title %} BNHS-User {% endblock %}
 
 {% block content %}
@@ -20,7 +15,7 @@
 
     {% block page_content %}
     <div class="page-header">
-        <h2>Please Sign in</h2>
+        <h1>Sign in</h1>
     </div>
     {{ form.csrf_token }}
     {{ wtf.quick_form(form) }}

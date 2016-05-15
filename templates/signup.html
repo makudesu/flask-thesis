@@ -19,12 +19,12 @@
             <h1>Register</h1>
         </div>
     </div>
-    <div class="container">
-        {{ form.csrf_token }}
-        {{ wtf.quick_form(form) }}
-    </div>
+ 	<div class="container">
+    {{ form.csrf_token }}
+    {{ wtf.quick_form(form) }}
+    {{ form.recaptcha }}
+	</div>
     {% endblock %}
 </div>
 {% endblock %}
-{% include "footer.html" %}
 </html>

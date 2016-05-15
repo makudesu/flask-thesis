@@ -11,6 +11,7 @@
 
 {% block head %} 
     {{ super() }}
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
         <link rel="shortcut icon" href="{{ url_for('static', filename = 'bnhs.jpg') }}" type="image/x-icon">
         <link rel="icon" href="{{ url_for('static', filename = 'bnhs.jpg') }}" type="image/x-icon">
 {% endblock %}
@@ -81,13 +82,3 @@
     {% block page_content %}{% endblock %}
 </div>
 {% endblock %}
-
-{% block footer %}
-<footer class="footer">
-    <div class="container">
-        <p class="text-muted">Thesis Project created by: <a href="https://makudesu.github.io">Mark Kevin</a>, <a href="">Emmanuel</a></p>
-    </div>
-</footer>
-{% endblock %}
-
-</html>

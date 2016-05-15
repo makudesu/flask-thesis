@@ -23,6 +23,11 @@ app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:root@localhost/thesis"
 app.config['CSY'] = '2016-2017'
 """set the enrollment"""
 app.config['Enrollment'] = True
+#recaptcha
+app.config['RECAPTCHA_USE_SSL'] = True
+app.config['RECAPTCHA_PUBLIC_KEY'] = '6LdyyB4TAAAAAMLx8wYShiHU3AsSbRCBdFnp8L1N'
+app.config['RECAPTCHA_PRIVATE_KEY'] = '6LdyyB4TAAAAAMtj9CGXKjuOBN3RflEWaXacx-t3'
+app.config['RECAPTCHA_OPTIONS'] = {'theme': 'white'}
 #app.config['SQLALCHEMY_DATABASE_URI'] = "postgres://vwuktasevlatqt:c-gzQ-avJEw5mlufChylQ25OKy@ec2-54-204-30-115.compute-1.amazonaws.com:5432/d8gppbdark5i8f"
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
@@ -79,6 +84,7 @@ class RegisterForm(Form):
         ('Trans', 'Transferee')
         ],
         validators=[Required()])
+    recaptcha = RecaptchaField()
     submit = SubmitField('Register')
 
 class LoginForm(Form):
