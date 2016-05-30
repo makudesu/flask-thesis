@@ -1,65 +1,64 @@
+<html>
 {% extends "base.html" %}
-{% block styles %}
-{{super()}}
-<link rel="stylesheet"
-      href="{{url_for('.static', filename='custom.css')}}">
-{% endblock %}
 {% block title %} BNHS {% endblock %}
 {% block page_content %}
 <div class="page-header">
-    <div class="jumbotron">
+    <div class="jumbotron vertical-center">
         <div class="container">
-        <h1>Welcome to BNHS</h1>
-        <p>Hello World</p>
+        <h1>BNHS</h1>
+            <p class="lead">Bambang National High School <br> Address: Boyie St,Pan - Philippine Hwy,Buag, Bambang, Nueva Vizcaya, Philippines<br>Phone:+63 78 803 1587<p>
+
+        {% if current_user.is_authenticated %}
+
+        <hr class="m-y-2">
+            <p>Join us. Enroll now!</p>
+        <p class="lead">
+            <a class="btn btn-primary btn-lg" href="{{ url_for('enroll') }}" role="button">Enroll Now</a>
+      </p>
+
+        {% else %}
+
+        <hr class="m-y-2">
+            <p>Join us. Sign Up now!</p>
+        <p class="lead">
+            <a class="btn btn-primary btn-lg" href="{{ url_for('signup') }}" role="button">Sign up today</a>
+      </p>
+         {% endif %}
         </div>
     </div>
 </div>
 
-            <h3 class="text-center" >Vision</h3>
-            <p class="text-center"> 
-    We dream of filipino who passionately love their country and whose values and competencies enable them to realize their full potential and contribute meaningfully to building the nation.
-            </p> 
-
-            <p class="text-center"> 
-        As a learner-centered public institution,
-            the department of education continuously improve itself to better serve its stakeholders
-            </p>
-
+<div class="container">
+    <div class="row row-centered">
+        <div class="col-sm-4 col-centered">
             <h3 class="text-center" >Mission</h3>
-
-            <p class="text-center"> 
-        As a learner-centered public institution,
     To protect and promote the right of every filipino to quality, equitable, culture-based, and complete basic education where:
-            </p>
 
-            <p class="text-center"> 
-        As a learner-centered public institution<br />
+    Students learn in a child-friendly, gender-sensitive, safe, and motivating environment
 
-    Students learn in a child-friendly, gender-sensitive, safe, and motivating environment<br />
+    Teachers facilitate learning and constantly nurture every learner
 
-    Teachers facilitate learning and constantly nurture every learner<br />
-
-    Administrators and staff, as stewards of the institution, ensure an enabling and supportive environment for effective learning to happen<br />
+    Administrators and staff, as stewards of the institution, ensure an enabling and supportive environment for effective learning to happen
 
     Family, community, and other stakeholders are actively engaged and share responsibility for developing life-long learners
-            </p>
+        </div>
 
+        <div class="col-sm-4 col-centered">
+            <h3 class="text-center" >Vision</h3>
+    We dream of filipino who passionately love their country and whose values and competencies enable them to realize their full potential and contribute meaningfully to building the nation.
+
+            the department of education continuously improve itself to better serve its stakeholders
+        </div>
+
+        <div class="col-sm-4 col-centered">
             <h3 class="text-center" >Core values</h3>
-
-            <p class="text-center"> 
-        Maka-Diyos
-            </p>
-
-            <p class="text-center"> 
-        Maka-Tao
-            </p>
-
-            <p class="text-center"> 
-        Makakalikasan
-            </p>
-
-            <p class="text-center"> 
+        Maka-Diyos<br>
+        Maka-Tao<br>
+        Makakalikasan<br>
         Makabansa
-            </p>
-
+        </div>
+    </div>
+</div>
 {% endblock %}
+{% include "footer.html" %}
+</html>

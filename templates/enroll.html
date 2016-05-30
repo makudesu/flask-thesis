@@ -1,3 +1,4 @@
+<html>
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
@@ -12,13 +13,19 @@
     </div>
     {% endfor %}
 
-    {% block page_content %}
-    <div class="page-header">
-        <h1>Registration of Bambang National High School</h1>
-    </div>
-    <p class="text-center">You are about to embark on a lifelong journey, a quest for knowledge. Get ready to immerse yourself on the discoveries, researches, and wisdom from past generations all over the world. LEARN, DISCOVER, SHARE. </p>
-    {{ form.csrf_token }}
-    {{ wtf.quick_form(form) }}
-    {% endblock %}
+        {% block page_content %}
+        <div class="page-header">
+            <h1>Registration of Bambang National High School</h1>
+        </div>
+        <div class="container">
+        <p class="text-center">You are about to embark on a lifelong journey, a quest for knowledge. Get ready to immerse yourself on the discoveries, researches, and wisdom from past generations all over the world. LEARN, DISCOVER, SHARE. </p>
+        </div>
+        <div class="container">
+        {{ form.csrf_token }}
+        {{ wtf.quick_form(form) }}
+        </div>
+        {% endblock %}
 </div>
 {% endblock %}
+{% include "footer.html" %}
+</html>
