@@ -13,3 +13,4 @@ gunicorn==19.4.5
 html5lib==1.0b3
 pytz==2015.7
 validators==0.10
+psycopg2==2.4.5
