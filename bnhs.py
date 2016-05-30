@@ -4,6 +4,7 @@ from flask.ext.wtf import Form, RecaptchaField
 from flask.ext.login import UserMixin, LoginManager, login_required, login_user, logout_user, current_user, AnonymousUserMixin, fresh_login_required
 from wtforms import StringField, SubmitField, PasswordField, SelectField, BooleanField, IntegerField, DateField
 from wtforms.validators import Required, EqualTo, Length
+from wtforms.widgets import Input
 
 from flask.ext.sqlalchemy import SQLAlchemy
 
@@ -72,14 +73,34 @@ class IsnotLoggedinMenuLink(MenuLink):
     def is_accessible(self):
         return current_user.is_authenticated == False
 
+"""widget for placeholder"""
+
+class CustomInput(Input):
+    input_type = None
+
+    def __init__(self, input_type=None, **kwargs):
+        self.params = kwargs
+        super(CustomInput, self).__init__(input_type=input_type)
+
+    def __call__(self, field, **kwargs):
+        for param, value in self.params.iteritems():
+            kwargs.setdefault(param, value)
+        return super(CustomInput, self).__call__(field, **kwargs)
+
+class CustomTextInput(CustomInput):
+    input_type = 'text'
+
+class CustomPasswordInput(CustomInput):
+    input_type = 'password'
+
 """forms"""
 class RegisterForm(Form):
-    username = StringField('Username', validators=[Required('Please provide a valid Username')])
+    username = StringField('Username', validators=[Required('Please provide a valid Username')], widget=CustomTextInput(placeholder="E.g. PeterParkerIsNotSpiderman"))
     password = PasswordField('Password', validators=[
         Required(), Length(min=8, message=(u'Password too short')),
         EqualTo('confirm', message='Passwords must match')
-        ])
-    confirm = PasswordField('Confirm Password', validators=[Required()])
+        ], widget=CustomPasswordInput(placeholder="Min. 8 characters"))
+    confirm = PasswordField('Confirm Password', validators=[Required(message=(u'Password must match'))], widget=CustomPasswordInput(placeholder="Retype password"))
     student_status = SelectField(u'Student Type', choices = [
         ('New', 'New Student'), 
         ('Trans', 'Transferee')
