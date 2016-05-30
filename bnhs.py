@@ -26,8 +26,8 @@ app.config['CSY'] = '2016-2017'
 app.config['Enrollment'] = True
 #recaptcha
 app.config['RECAPTCHA_USE_SSL'] = True
-app.config['RECAPTCHA_PUBLIC_KEY'] = '6LdyyB4TAAAAAMLx8wYShiHU3AsSbRCBdFnp8L1N'
-app.config['RECAPTCHA_PRIVATE_KEY'] = '6LdyyB4TAAAAAMtj9CGXKjuOBN3RflEWaXacx-t3'
+app.config['RECAPTCHA_PUBLIC_KEY'] = '6LdBQCETAAAAAFkHevzwOk1KQNqQBQK-n2_hsaoD'
+app.config['RECAPTCHA_PRIVATE_KEY'] = '6LdBQCETAAAAAIYdPkHMn-WccxDX2AYgJPlE9cMO'
 app.config['RECAPTCHA_OPTIONS'] = {'theme': 'white'}
 #app.config['SQLALCHEMY_DATABASE_URI'] = "postgres://vwuktasevlatqt:c-gzQ-avJEw5mlufChylQ25OKy@ec2-54-204-30-115.compute-1.amazonaws.com:5432/d8gppbdark5i8f"
 login_manager = LoginManager()
