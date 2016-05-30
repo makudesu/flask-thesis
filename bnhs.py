@@ -1,7 +1,7 @@
 from flask import Flask, render_template, flash, request, url_for, redirect, session, Response
 from flask.ext.bootstrap import Bootstrap
-from flask.ext.wtf import Form
-from flask.ext.login import UserMixin, LoginManager, login_required, login_user, logout_user, current_user, AnonymousUserMixin
+from flask.ext.wtf import Form, RecaptchaField
+from flask.ext.login import UserMixin, LoginManager, login_required, login_user, logout_user, current_user, AnonymousUserMixin, fresh_login_required
 from wtforms import StringField, SubmitField, PasswordField, SelectField, BooleanField, IntegerField, DateField
 from wtforms.validators import Required, EqualTo
 
