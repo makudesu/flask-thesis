@@ -13,7 +13,6 @@
     </div>
     {% endfor %}
 
-    {% block page_content %}
     <div class="container">
         <div class="page-header">
             <h1>Register</h1>
@@ -24,7 +23,11 @@
     {{ wtf.quick_form(form) }}
     {{ form.recaptcha }}
 	</div>
-    {% endblock %}
 </div>
-{% endblock %}
-</html>
+    <hr>
+
+{% block page_content %}
+{{super()}}
+{% endblock page_content %}
+
+{% endblock content %}

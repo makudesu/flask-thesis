@@ -12,15 +12,16 @@
         {{ message }}
     </div>
     {% endfor %}
-
-    {% block page_content %}
     <div class="page-header">
         <h1>Sign in</h1>
     </div>
     {{ form.csrf_token }}
     {{ wtf.quick_form(form) }}
-    {% endblock %}
 </div>
-{% endblock %}
-{% include "footer.html" %}
-</html>
+    <hr>
+
+{% block page_content %}
+{{super()}}
+{% endblock page_content %}
+
+{% endblock content %}
