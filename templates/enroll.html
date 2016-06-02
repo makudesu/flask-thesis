@@ -12,47 +12,61 @@
     </div>
     {% endfor %}
 
-        {% block page_content %}
         <div class="page-header">
             <h1>Registration of Bambang National High School</h1>
         </div>
 <div class="container">
 <div class="row">
     <div class="col-md-3 scrollspy"> 
-    <ul id="nav" class="nav hidden-xs hidden-sm" data-spy="affix" data-offset-top="60" data-offset-bottom="200">
+    <ul id="nav" class="nav hidden-xs hidden-sm" data-spy="affix" data-offset-top="60">
     <li><a href="#bnhs">BNHS</a></li>
+    <ul class="nav">
     <li><a href="#mission">Mission</a></li>
     <li><a href="#vision">Vision</a></li>
     <li><a href="#photos">Photos</a></li>
+    </ul>
+    <hr>
 <li>        {{ form.csrf_token }}
         {{ wtf.quick_form(form) }} </li>
     </ul>
-    </div> <!-- col-->
+    </div>
 
     <div class="col-md-9">
 
         <section id="bnhs">
+    <h3>Bnhs</h3>
     <p>Maka-Diyos
 Maka-Tao
 Makakalikasan
 Makabansa </p>
         </section>
+    <hr>
 
         <section id="mission">
+    <h3>Mission</h3>
     <p>To protect and promote the right of every filipino to quality, equitable, culture-based, and complete basic education where: Students learn in a child-friendly, gender-sensitive, safe, and motivating environment Teachers facilitate learning and constantly nurture every learner Administrators and staff, as stewards of the institution, ensure an enabling and supportive environment for effective learning to happen Family, community, and other stakeholders are actively engaged and share responsibility for developing life-long learners </p>
         </section>
+    <hr>
 
         <section id="vision">
+    <h3>Vission</h3>
     <p>We dream of filipino who passionately love their country and whose values and competencies enable them to realize their full potential and contribute meaningfully to building the nation. the department of education continuously improve itself to better serve its stakeholders </p>
         </section>
+    <hr>
 
         <section id="photos">
+    <h3>Photos</h3>
         <a class="twitter-grid" data-limit="10" href="https://twitter.com/makudesu_/timelines/738248982414036992">BNHS</a> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
         </section>
 
     </div> <!-- md-9-->
 </div> <!-- row -->
 </div> <!-- container -->
-        {% endblock %}
 </div>
-{% endblock %}
+    <hr>
+
+{% block page_content %}
+{{super()}}
+{% endblock page_content %}
+
+{% endblock content %}

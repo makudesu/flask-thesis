@@ -3,7 +3,7 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% block title %} BNHS {% endblock %}
 
-{% block page_content %}
+{% block content %}
 <div class="container">
     <div class="page-header">
         <h1>Edit Your profile</h1>
@@ -13,6 +13,10 @@
     {{ form.csrf_token }}
     {{ wtf.quick_form(form) }}
     </div>
-{% endblock %}
-{% include "footer.html" %}
-</html>
+    <hr>
+
+{% block page_content %}
+{{super()}}
+{% endblock page_content %}
+
+{% endblock content %}

@@ -1,4 +1,3 @@
-<html>
 {% extends "bootstrap/base.html" %}
 
 {% block title %}BNHS{% endblock %}
@@ -10,13 +9,14 @@
 {% endblock %}
 
 {% block head %} 
-    {{ super() }}
+{{super()}}
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
         <link rel="shortcut icon" href="{{ url_for('static', filename = 'bnhs.jpg') }}" type="image/x-icon">
         <link rel="icon" href="{{ url_for('static', filename = 'bnhs.jpg') }}" type="image/x-icon">
 {% endblock %}
 
 {% block navbar %}
+{{super()}}
 <div class="navbar navbar-default" role="navigation">
 <div class="container">
     <div class=navbar-header">
@@ -69,7 +69,7 @@
 {% endblock %}
 
 {% block content %}
-
+{{super()}}
 <div class="container">
     {% for message in get_flashed_messages() %}
     <div class="alert alert-warning">
@@ -78,7 +78,19 @@
     </div>
     {% endfor %}
 
+{% block footer %}
+tae bou
+{% endblock footer %}
+
+
 <div class="container">
-    {% block page_content %}{% endblock %}
+    {% block page_content %}
+<br>
+<br>
+<br>
+<br>
+{% include "footer.html" %}
+    {% endblock page_content%}
 </div>
+
 {% endblock %}

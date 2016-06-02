@@ -1,7 +1,7 @@
-<html>
 {% extends "base.html" %}
 {% block title %} BNHS {% endblock %}
-{% block page_content %}
+{% block content %}
+<div class="container">
 <div class="page-header">
     <div class="jumbotron vertical-center">
         <div class="container">
@@ -27,6 +27,7 @@
         </div>
     </div>
 </div>
+</div> <!--first container-->
 
 <div class="container">
     <div class="row row-centered">
@@ -59,6 +60,10 @@
         </div>
     </div>
 </div>
-{% endblock %}
-{% include "footer.html" %}
-</html>
+    <hr>
+
+{% block page_content %}
+{{super()}}
+{% endblock page_content %}
+
+{% endblock content %}
