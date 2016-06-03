@@ -19,8 +19,8 @@ from functools import wraps
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '128JSD*idfedf8ued89f7JHEDFjtw1143589123849iU*(UDF*D*F()D*F)(D*fjsdjfkj238490sdjfkjJDJFi(*)(&^&^*%tYYGHGhjBBb*H*hffJghgdfhkjk3eio2u3oiuqwoieuoiqyopolavofuiekghogsjdb*&&&DFOD&*F*(D&F*(DIOFUIKFHJDJHCKJVHJKCVkchvuhyiudyf8s9df98789743124789238UIOuFKAHDFKJAHDKLASHjkdgasgdhhasdgkjashdU(*&(*&*(*^^ASd876a7s6d87&&$^%$^#<F2>3234$#@121432!$25434%79^)*X&D(97_(A*Sd09POJZXd'
 #app.config['SQLALCHEMY_DATABASE_URI'] = "postgres://ljaavoeziccuxy:R1AYt8nzTJLR5tC-BfaM3fZ6sg@ec2-54-225-112-119.compute-1.amazonaws.com:5432/d9hrf2d6n9ifu9"
-#app.config['SQLALCHEMY_DATABASE_URI'] = "postgres://ljaavoeziccuxy:R1AYt8nzTJLR5tC-BfaM3fZ6sg@54.225.112.119:5432/d9hrf2d6n9ifu9"
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:////tmp/test.db"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgres://ljaavoeziccuxy:R1AYt8nzTJLR5tC-BfaM3fZ6sg@54.225.112.119:5432/d9hrf2d6n9ifu9"
+#app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:////tmp/test.db"
 #app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:root@localhost/thesis"
 """set the school year"""
 app.config['CSY'] = '2016-2017'
@@ -125,19 +125,18 @@ class ChangePasswordForm(Form):
     submit = SubmitField('Change Password')
 
 class EnrollForm(Form):
-    username = StringField('Username', validators=[Required()])
 
-    last_name = StringField('Last Name', validators=[Required()])
-    first_name = StringField('First Name', validators=[Required()])
-    middle_name = StringField('Middle Name', validators=[Required()])
-    gender = StringField('Gender', validators=[Required()])
-    birth_date = StringField('Birth Date', validators=[Required()])
-    age = StringField('Age', validators=[Required()])
-    birth_place = StringField('Birth Place', validators=[Required()])
-    religion = StringField('Religion', validators=[Required()])
-    present_address = StringField('Present Address', validators=[Required()])
-    email = StringField('Email', validators=[Required()])
-    contact_number = IntegerField('Contact Number', validators=[Required()])
+    last_name = StringField('Last Name', validators=[Required()], widget=CustomTextInput(placeholder="E.g. Parker"))
+    first_name = StringField('First Name', validators=[Required()], widget=CustomTextInput(placeholder="E.g. Peter"))
+    middle_name = StringField('Middle Name', validators=[Required()], widget=CustomTextInput(placeholder="E.g. Benjamin"))
+    gender = StringField('Gender', validators=[Required()], widget=CustomTextInput(placeholder="E.g. Male"))
+    birth_date = StringField('Birth Date', validators=[Required()], widget=CustomTextInput(placeholder="E.g.YYYY/MM/DD"))
+    age = StringField('Age', validators=[Required()], widget=CustomTextInput(placeholder="E.g. 22"))
+    birth_place = StringField('Birth Place', validators=[Required()], widget=CustomTextInput(placeholder="E.g. New York"))
+    religion = StringField('Religion', validators=[Required()], widget=CustomTextInput(placeholder="E.g. Pentecostal"))
+    present_address = StringField('Present Address', validators=[Required()], widget=CustomTextInput(placeholder="E.g. Marvel Universe"))
+    email = StringField('Email', validators=[Required()], widget=CustomTextInput(placeholder="E.g. peterparker@oscorp.org"))
+    contact_number = IntegerField('Contact Number', validators=[Required()], widget=CustomTextInput(placeholder="E.g. 09170000000"))
 
     submit = SubmitField('Save')
 

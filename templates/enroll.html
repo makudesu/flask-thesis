@@ -30,8 +30,11 @@
     <p>A button will appear after </p>
     <p>successfully completing Step 1.</p>
     <p>Click the button to register.</p>
+    {% if current_user.contact_number %}
 <li>        {{ form.csrf_token }}
         {{ wtf.quick_form(form) }} </li>
+    {% else %}
+    {% endif %}
     </ul>
     </div>
 
