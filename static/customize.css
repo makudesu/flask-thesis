@@ -35,3 +35,22 @@ h3 {
     text-align:right;
     color: #818385;
 }
+
+@font-face {
+    font-family: 'Helv';
+    src: url('HelveticaNeue-UltraLight.otf');
+}
+
+@font-face {
+    font-family: 'Helv-Cond';
+    src: url('HelveticaNeue-UltraLigCond.otf');
+}
+
+.helv-font{
+    font-family: Helv;
+    font-weight: lighter;
+}
+.helv-font-p{
+    font-family: Helv;
+    font-size: 20px;
+}
